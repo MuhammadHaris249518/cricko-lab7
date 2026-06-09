@@ -465,6 +465,9 @@ footer { border-top: 1px solid var(--glass-border); padding: 28px 40px; }
             <a href="#" class="forgot-link">Forgot Password?</a>
           </div>
 
+          <!-- Server error -->
+          <div id="loginServerError" class="field-msg error" style="margin-bottom:14px;height:auto;padding:10px 14px;background:rgba(232,56,90,0.08);border-radius:8px;border:1px solid rgba(232,56,90,0.2);"></div>
+
           <!-- Submit -->
           <button type="submit" class="btn-submit" id="loginSubmitBtn">
             <i class="fas fa-arrow-right-to-bracket" style="margin-right:10px"></i>Launch Dashboard
@@ -539,27 +542,52 @@ document.getElementById('loginPassword').addEventListener('input', function() {
 // ═══════════════════════════════════
 //  FORM SUBMIT
 // ═══════════════════════════════════
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
 
-  const email = document.getElementById('loginEmail').value.trim();
+  const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
 
-  if (!email) { setError('loginEmail','emailError',true); valid = false; }
-  else setError('loginEmail','emailError',false);
+  if (!email)    { setError('loginEmail',    'emailError',    true);  valid = false; }
+  else             setError('loginEmail',    'emailError',    false);
 
-  if (!password) { setError('loginPassword','passwordError',true); valid = false; }
-  else setError('loginPassword','passwordError',false);
+  if (!password) { setError('loginPassword', 'passwordError', true);  valid = false; }
+  else             setError('loginPassword', 'passwordError', false);
 
-  if (valid) {
-    const btn = document.getElementById('loginSubmitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:10px"></i>Authenticating…';
-    setTimeout(() => {
+  if (!valid) return;
+
+  const btn = document.getElementById('loginSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:10px"></i>Authenticating…';
+  document.getElementById('loginServerError').classList.remove('show');
+
+  try {
+    const res  = await fetch('/api/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, password })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      localStorage.setItem('cricko_token', json.data.token);
+      localStorage.setItem('cricko_user',  JSON.stringify(json.data.user));
       document.getElementById('loginSuccess').classList.add('show');
       document.getElementById('loginSuccess').scrollIntoView({ behavior:'smooth', block:'center' });
-    }, 800);
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket" style="margin-right:10px"></i>Launch Dashboard';
+      const errEl = document.getElementById('loginServerError');
+      errEl.textContent = json.message || 'Login failed. Please try again.';
+      errEl.classList.add('show');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket" style="margin-right:10px"></i>Launch Dashboard';
+    const errEl = document.getElementById('loginServerError');
+    errEl.textContent = 'Server error. Please try again.';
+    errEl.classList.add('show');
   }
 });
 

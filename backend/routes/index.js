@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 
+router.use('/auth',          require('./authRoutes'));
 router.use('/players',       require('./playerRoutes'));
 router.use('/registrations', require('./registrationRoutes'));
 router.use('/tournaments',   require('./tournamentRoutes'));

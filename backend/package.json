@@ -9,9 +9,20 @@
     "seed": "node utils/seed.js"
   },
   "nodemonConfig": {
-    "watch": ["server.js", "config", "controllers", "middleware", "models", "routes", "utils"],
+    "watch": [
+      "server.js",
+      "config",
+      "controllers",
+      "middleware",
+      "models",
+      "routes",
+      "utils"
+    ],
     "ext": "js,json",
-    "ignore": ["node_modules", "../frontend"],
+    "ignore": [
+      "node_modules",
+      "../frontend"
+    ],
     "delay": 500
   },
   "keywords": [],
@@ -19,11 +30,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.3",
     "morgan": "^1.11.0"
   },

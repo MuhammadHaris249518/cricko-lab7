@@ -468,6 +468,9 @@ footer { border-top: 1px solid var(--glass-border); padding: 32px 40px; }
           <div class="field-msg success" id="confirmSuccess"><i class="fas fa-circle-check"></i> Passwords match</div>
         </div>
 
+        <!-- Server error -->
+        <div id="serverError" class="field-msg error" style="margin-bottom:14px;height:auto;padding:10px 14px;background:rgba(232,56,90,0.08);border-radius:8px;border:1px solid rgba(232,56,90,0.2);"></div>
+
         <!-- Submit -->
         <button type="submit" class="btn-submit" id="submitBtn">
           <i class="fas fa-rocket" style="margin-right:10px"></i>Create Account
@@ -625,7 +628,7 @@ getEl('confirmPassword').addEventListener('input', validateConfirm);
 // ═══════════════════════════════════
 //  FORM SUBMISSION
 // ═══════════════════════════════════
-getEl('signupForm').addEventListener('submit', function(e) {
+getEl('signupForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
 
@@ -673,11 +676,36 @@ getEl('signupForm').addEventListener('submit', function(e) {
   // Confirm
   if (!validateConfirm()) valid = false;
 
-  if (valid) {
-    getEl('submitBtn').disabled = true;
-    getEl('successOverlay').classList.add('show');
-    // Scroll to success
-    getEl('successOverlay').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!valid) return;
+
+  const btn = getEl('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:10px"></i>Creating Account…';
+
+  try {
+    const res  = await fetch('/api/auth/register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ firstName: fn, lastName: ln, age: ageNum, email, password: pwd })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      localStorage.setItem('cricko_token', json.data.token);
+      localStorage.setItem('cricko_user',  JSON.stringify(json.data.user));
+      getEl('successOverlay').classList.add('show');
+      getEl('successOverlay').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-rocket" style="margin-right:10px"></i>Create Account';
+      getEl('serverError').textContent = json.message || 'Registration failed. Please try again.';
+      getEl('serverError').classList.add('show');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-rocket" style="margin-right:10px"></i>Create Account';
+    getEl('serverError').textContent = 'Server error. Please try again.';
+    getEl('serverError').classList.add('show');
   }
 });
 
