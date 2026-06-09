@@ -54,9 +54,14 @@ app.use('/api/{*path}', (req, res) => {
 // ── Centralized Error Handler ─────────────────────────────────────────────────
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n  CRICKO API v2.0  →  http://localhost:${PORT}`);
-  console.log(`  Admin Dashboard  →  http://localhost:${PORT}/admin.html`);
-  console.log(`  Frontend path:      ${frontendPath}\n`);
-});
+// Local dev: start the server. Vercel: export the app as a handler.
+if (process.env.VERCEL !== '1') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`\n  CRICKO API v2.0  →  http://localhost:${PORT}`);
+    console.log(`  Admin Dashboard  →  http://localhost:${PORT}/admin.html`);
+    console.log(`  Frontend path:      ${frontendPath}\n`);
+  });
+}
+
+module.exports = app;
