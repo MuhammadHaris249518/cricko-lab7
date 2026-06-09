@@ -16,7 +16,12 @@ const seed = async () => {
     await Tournament.insertMany(seedTournaments);
     console.log('Seeded 3 tournaments into MongoDB.');
   } else {
-    console.log(`Skipping seed — ${existing} tournaments already exist.`);
+    // Update fees on existing tournaments so they match the current INR values
+    for (const t of seedTournaments) {
+      const result = await Tournament.updateOne({ name: t.name }, { $set: { fee: t.fee, date: t.date, maxPlayers: t.maxPlayers } });
+      if (result.matchedCount) console.log(`Updated "${t.name}" — fee: ₹${t.fee}`);
+    }
+    console.log(`${existing} tournaments already exist — updated fees to INR.`);
   }
   mongoose.connection.close();
 };

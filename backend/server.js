@@ -19,10 +19,19 @@ const allowedOrigins = process.env.CORS_ORIGIN
       'http://localhost:3000',
       'http://localhost:5500',
       ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+      // Vercel production URL (different from per-deploy VERCEL_URL)
+      ...(process.env.VERCEL_PROJECT_PRODUCTION_URL
+            ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`]
+            : []),
     ];
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    // On Vercel allow all *.vercel.app preview/production URLs — same project, same owner
+    if (process.env.VERCEL === '1' && /^https:\/\/[^.]+\.vercel\.app$/.test(origin)) {
+      return cb(null, true);
+    }
     cb(new Error(`CORS: origin ${origin} not allowed`));
   }
 }));
@@ -48,19 +57,19 @@ const dbMiddleware = async (req, res, next) => {
   }
 };
 
+// ── Health Check (no DB needed) ───────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.json({ success: true, message: 'CRICKO API is running', data: { version: '2.0.0' } });
+});
+
 // ── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api', dbMiddleware, routes);
 
 // Legacy /players route kept for backward compatibility
 app.use('/players', dbMiddleware, require('./routes/playerRoutes'));
 
-// ── Health Check ──────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'CRICKO API is running', data: { version: '2.0.0' } });
-});
-
 // ── 404 for Unknown API Calls ─────────────────────────────────────────────────
-app.use('/api/{*path}', (req, res) => {
+app.use('/api/*path', (req, res) => {
   res.status(404).json({ success: false, message: 'API endpoint not found', data: null });
 });
 
