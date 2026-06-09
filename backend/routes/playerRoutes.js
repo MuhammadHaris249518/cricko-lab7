@@ -1,0 +1,25 @@
+const express = require('express');
+const router = express.Router();
+
+const players = [
+  { name: 'Virat Kohli',     role: 'Batter',        team: 'Mumbai Kings',     emoji: '🏏', runs: 6842, avg: '58.2', wkts: null, econ: null,  captain: true,  rank: 1  },
+  { name: 'Jasprit Bumrah',  role: 'Bowler',         team: 'Mumbai Kings',     emoji: '⚡', runs: null, avg: null,   wkts: 187,  econ: '6.8', captain: false, rank: 2  },
+  { name: 'KL Rahul',        role: 'Wicket-Keeper',  team: 'Hyderabad Hawks',  emoji: '🧤', runs: 5120, avg: '47.6', wkts: null, econ: null,  captain: true,  rank: 3  },
+  { name: 'Rohit Sharma',    role: 'Batter',         team: 'Mumbai Kings',     emoji: '🧢', runs: 5943, avg: '52.1', wkts: null, econ: null,  captain: false, rank: 4  },
+  { name: 'Hardik Pandya',   role: 'All-Rounder',    team: 'Mumbai Kings',     emoji: '🔥', runs: 2340, avg: null,   wkts: 82,   econ: null,  captain: false, rank: 5  },
+  { name: 'MS Dhoni',        role: 'Wicket-Keeper',  team: 'Chennai Blaze',    emoji: '🧤', runs: 4732, avg: '38.4', wkts: null, econ: null,  captain: true,  rank: 6  },
+  { name: 'Ravindra Jadeja', role: 'All-Rounder',    team: 'Chennai Blaze',    emoji: '🌀', runs: 1980, avg: null,   wkts: 150,  econ: null,  captain: false, rank: 7  },
+  { name: 'Shubman Gill',    role: 'Batter',         team: 'Kolkata Thunder',  emoji: '🏏', runs: 4120, avg: '49.3', wkts: null, econ: null,  captain: false, rank: 8  },
+  { name: 'Yuzvendra Chahal',role: 'Bowler',         team: 'Rajasthan Rockets',emoji: '🌀', runs: null, avg: null,   wkts: 198,  econ: '7.8', captain: false, rank: 9  },
+  { name: 'Mohammed Siraj',  role: 'Bowler',         team: 'Delhi Dragons',    emoji: '🎯', runs: null, avg: null,   wkts: 143,  econ: '7.2', captain: false, rank: 10 },
+  { name: 'Shreyas Iyer',    role: 'Batter',         team: 'Kolkata Thunder',  emoji: '🏏', runs: 3890, avg: '44.7', wkts: null, econ: null,  captain: true,  rank: 11 },
+  { name: 'Axar Patel',      role: 'All-Rounder',    team: 'Delhi Dragons',    emoji: '🔥', runs: 1640, avg: null,   wkts: 98,   econ: null,  captain: false, rank: 12 },
+];
+
+router.get('/', (req, res) => {
+  const { role } = req.query;
+  const result = role ? players.filter(p => p.role === role) : players;
+  res.json({ success: true, message: 'OK', data: result });
+});
+
+module.exports = router;

@@ -1,0 +1,12 @@
+{
+  "name": "cricko",
+  "version": "2.0.0",
+  "description": "CRICKO Tournament Platform",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node backend/server.js",
+    "install-deps": "cd backend && npm install"
+  }
+}

@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CRICKO — Premier Cricket Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/theme.css"/>
+<link rel="stylesheet" href="assets/css/chatbot.css"/>
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --bg: #06070f;
+  --bg2: #0d0f1e;
+  --bg3: #111428;
+  --gold: #f0a500;
+  --gold2: #ffd166;
+  --rose: #e8385a;
+  --indigo: #6366f1;
+  --teal: #0dd6c0;
+  --white: #f0f2ff;
+  --muted: #6b7280;
+  --border: rgba(240,165,0,0.15);
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.08);
+  --radius: 16px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ===== MESH BACKGROUND ===== */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(240,165,0,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 80%, rgba(99,102,241,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(232,56,90,0.04) 0%, transparent 60%);
+}
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ===== CONTENT WRAPPER ===== */
+.content { position: relative; z-index: 2; }
+
+/* ===== NAVBAR ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 40px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6,7,15,0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background 0.3s;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.logo-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transform-style: preserve-3d;
+  transform: perspective(200px) rotateY(-5deg);
+  box-shadow: 4px 4px 20px rgba(240,165,0,0.3), -2px -2px 8px rgba(232,56,90,0.2);
+}
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  background: linear-gradient(135deg, var(--gold2), var(--gold), var(--rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 3px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--gold), var(--rose));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--white); }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  color: #06070f !important;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 1.5px;
+  transition: all 0.3s !important;
+  box-shadow: 0 4px 16px rgba(240,165,0,0.25);
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(240,165,0,0.35) !important; color: #06070f !important; }
+
+/* ===== HAMBURGER ===== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 70px; left: 0; right: 0;
+  background: rgba(6,7,15,0.97);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 24px 40px;
+  flex-direction: column;
+  gap: 16px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  text-decoration: none;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+.mobile-menu a:hover { color: var(--gold); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 40px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240,165,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240,165,0,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridShift 20s linear infinite;
+}
+@keyframes gridShift {
+  from { background-position: 0 0; }
+  to { background-position: 60px 60px; }
+}
+.hero-orb1 {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,165,0,0.12) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.hero-orb2 {
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,56,90,0.10) 0%, transparent 70%);
+  bottom: 0; left: 10%;
+  animation: orbFloat 10s ease-in-out infinite reverse;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
+}
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(240,165,0,0.1);
+  border: 1px solid rgba(240,165,0,0.25);
+  border-radius: 100px;
+  padding: 7px 16px;
+  font-size: 11px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s ease both;
+}
+.hero-badge-dot {
+  width: 7px; height: 7px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--gold);
+  animation: pulse 1.5s ease infinite;
+}
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.6; transform:scale(0.8); } }
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(42px, 6vw, 80px);
+  line-height: 1.0;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s ease 0.1s both;
+}
+.hero-title .line1 { color: var(--white); display: block; }
+.hero-title .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 40%, var(--rose) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-title .line3 { color: rgba(240,242,255,0.4); display: block; font-size: 0.6em; font-weight: 600; margin-top: 8px; letter-spacing: 4px; }
+.hero-sub {
+  color: rgba(240,242,255,0.55);
+  font-size: 17px;
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.8s ease 0.3s both;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 30px;
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  color: #06070f;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 8px 30px rgba(240,165,0,0.3), 0 0 0 1px rgba(240,165,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(240,165,0,0.4); }
+.btn-primary:hover::before { opacity: 1; }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 30px;
+  background: transparent;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1px solid rgba(240,242,255,0.15);
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); background: rgba(240,165,0,0.05); transform: translateY(-2px); }
+
+/* ===== 3D HERO CARD ===== */
+.hero-visual {
+  animation: fadeLeft 0.9s ease 0.2s both;
+  perspective: 1000px;
+}
+.hero-card-3d {
+  background: linear-gradient(145deg, rgba(240,165,0,0.08), rgba(99,102,241,0.06), rgba(232,56,90,0.05));
+  border: 1px solid rgba(240,165,0,0.2);
+  border-radius: 24px;
+  padding: 36px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: card3dFloat 6s ease-in-out infinite;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(240,165,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+}
+@keyframes card3dFloat {
+  0%,100% { transform: perspective(1000px) rotateY(-8deg) rotateX(4deg) translateZ(0); }
+  50% { transform: perspective(1000px) rotateY(-5deg) rotateX(2deg) translateZ(20px); }
+}
+.hero-card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(240,165,0,0.06), transparent, rgba(99,102,241,0.04));
+  pointer-events: none;
+}
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.card-season-badge {
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  color: #06070f;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+.card-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: var(--font-display);
+  color: var(--teal);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.card-live-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; box-shadow: 0 0 8px var(--teal); animation: pulse 1.5s infinite; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.3s;
+}
+.stat-item:hover { transform: translateZ(10px) scale(1.02); }
+.stat-item::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--rose));
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  background: linear-gradient(135deg, var(--gold2), var(--rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-lbl {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-display);
+  margin-top: 4px;
+}
+.match-preview {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 18px;
+}
+.match-preview-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-display);
+  margin-bottom: 14px;
+}
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.match-team {
+  text-align: center;
+}
+.team-score {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--white);
+}
+.team-name {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+}
+.match-vs {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--rose);
+  letter-spacing: 2px;
+  text-align: center;
+}
+.match-status {
+  font-size: 10px;
+  color: var(--teal);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== SCROLL INDICATOR ===== */
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: bounceDown 2s ease infinite;
+}
+@keyframes bounceDown { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+.scroll-hint::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+}
+
+/* ===== SECTION BASE ===== */
+section { padding: 100px 40px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--gold), var(--rose));
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+.section-title span {
+  background: linear-gradient(135deg, var(--gold2), var(--gold), var(--rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-sub {
+  color: rgba(240,242,255,0.5);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+/* ===== ABOUT SECTION ===== */
+.about-section { background: var(--bg2); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-top: 60px;
+}
+.about-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+.feature-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(240,165,0,0.06), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.feature-card:hover {
+  border-color: rgba(240,165,0,0.25);
+  transform: translateY(-4px) translateZ(10px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,165,0,0.1);
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+.feature-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ABOUT RIGHT VISUAL */
+.about-visual {
+  position: relative;
+  perspective: 1200px;
+}
+.phase-card {
+  background: linear-gradient(145deg, rgba(240,165,0,0.07), rgba(99,102,241,0.05));
+  border: 1px solid rgba(240,165,0,0.18);
+  border-radius: 20px;
+  padding: 32px;
+  transform: perspective(1200px) rotateY(8deg) rotateX(-2deg);
+  animation: rightCardFloat 7s ease-in-out infinite;
+  box-shadow: -20px 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(240,165,0,0.08);
+}
+@keyframes rightCardFloat {
+  0%,100%{transform:perspective(1200px) rotateY(8deg) rotateX(-2deg) translateY(0)}
+  50%{transform:perspective(1200px) rotateY(6deg) rotateX(-1deg) translateY(-12px)}
+}
+.phase-item {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.phase-item:last-child { margin-bottom: 0; border: none; padding: 0; }
+.phase-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.phase-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--white); }
+.phase-count { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--gold); }
+.phase-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
+.phase-fill { height: 100%; border-radius: 99px; }
+
+/* ===== STATS BANNER ===== */
+.stats-banner {
+  background: linear-gradient(135deg, rgba(240,165,0,0.05), rgba(232,56,90,0.04));
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 60px 40px;
+}
+.stats-row { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+.stat-big { text-align: center; }
+.stat-big-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 52px;
+  background: linear-gradient(135deg, var(--gold2), var(--rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.stat-big-lbl { font-family: var(--font-display); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+
+/* ===== CTA SECTION ===== */
+.cta-section {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(240,165,0,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-title { font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+.cta-sub { color: rgba(240,242,255,0.5); font-size: 17px; margin-bottom: 40px; }
+.cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--glass-border);
+  padding: 60px 40px 40px;
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 48px; }
+.footer-brand-desc { color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 300px; margin: 16px 0 24px; }
+.footer-socials { display: flex; gap: 12px; }
+.social-btn {
+  width: 38px; height: 38px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+.social-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(240,165,0,0.08); }
+.footer-col-title { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.3s; }
+.footer-links a:hover { color: var(--white); }
+.footer-bottom { border-top: 1px solid var(--glass-border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-copy { font-size: 13px; color: var(--muted); font-family: var(--font-display); letter-spacing: 0.5px; }
+.footer-love { font-size: 13px; color: var(--muted); }
+.footer-love span { color: var(--rose); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeLeft { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links, .nav-cta-wrap { display: none; }
+  .hamburger { display: flex; }
+  .hero { padding: 100px 24px 60px; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { order: -1; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .footer-top { grid-template-columns: 1fr; gap: 36px; }
+  section { padding: 70px 24px; }
+  .stats-banner { padding: 50px 24px; }
+  .cta-section { padding: 80px 24px; }
+}
+@media (max-width: 600px) {
+  .hero-btns { flex-direction: column; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .about-features { grid-template-columns: 1fr; }
+  .card3dFloat { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="noise-overlay"></div>
+
+<div class="content">
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+    <span class="logo-text">CRICKO</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="schedule.html">Schedule</a></li>
+    <li><a href="players.html">Players</a></li>
+    <li><a href="tournament.html">Tournament</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="signup.html">Sign Up</a></li>
+  </ul>
+  <div class="nav-cta-wrap">
+    <a href="login.html" class="nav-cta nav-links" style="font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;padding:9px 22px;border-radius:8px;box-shadow:0 4px 16px rgba(240,165,0,0.25);transition:all 0.3s;display:inline-block">Login</a>
+  </div>
+  <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+    <i class="fas fa-sun"></i>
+  </button>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="schedule.html">Schedule</a>
+    <a href="players.html">Players</a>
+    <a href="tournament.html">Tournament</a>
+    <a href="contact.html">Contact</a>
+    <a href="signup.html">Sign Up</a>
+    <a href="login.html" style="color:var(--gold)">Login</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Season 2025 — Now Live
+      </div>
+      <h1 class="hero-title">
+        <span class="line1">The Future</span>
+        <span class="line2">Of Cricket</span>
+        <span class="line3">Is Here</span>
+      </h1>
+      <p class="hero-sub">Eight elite teams. Forty explosive matches. One legendary champion. Experience cricket elevated by AI analytics, augmented reality, and unmatched atmosphere.</p>
+      <div class="hero-btns">
+        <a href="schedule.html" class="btn-primary"><i class="fas fa-calendar-alt"></i> View Schedule</a>
+        <a href="players.html" class="btn-outline"><i class="fas fa-users"></i> Meet Players</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-3d">
+        <div class="card-top-bar">
+          <span class="card-season-badge">SEASON 2025</span>
+          <span class="card-live"><span class="card-live-dot"></span> LIVE MATCH</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl">Teams</div></div>
+          <div class="stat-item"><div class="stat-num">40</div><div class="stat-lbl">Matches</div></div>
+          <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">Venues</div></div>
+          <div class="stat-item"><div class="stat-num">₹5Cr</div><div class="stat-lbl">Prize</div></div>
+        </div>
+        <div class="match-preview">
+          <div class="match-preview-label">Latest Match Update</div>
+          <div class="match-teams">
+            <div class="match-team">
+              <div class="team-score">187/4</div>
+              <div class="team-name">MUMBAI</div>
+            </div>
+            <div>
+              <div class="match-vs">VS</div>
+              <div class="match-status">18.2 OVR</div>
+            </div>
+            <div class="match-team">
+              <div class="team-score" style="color:var(--muted)">164/8</div>
+              <div class="team-name">DELHI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">About the Tournament</div>
+      <h2 class="section-title">What is <span>CRICKO</span>?</h2>
+      <p class="section-sub">The most technologically advanced cricket league ever conceived — where data science meets elite competition.</p>
+    </div>
+    <div class="about-grid">
+      <div>
+        <div class="about-features reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(240,165,0,0.12)"><i class="fas fa-microchip" style="color:var(--gold)"></i></div>
+            <div class="feature-name">AI Analytics</div>
+            <div class="feature-desc">Real-time machine learning powering every decision on and off the field.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(99,102,241,0.12)"><i class="fas fa-vr-cardboard" style="color:var(--indigo)"></i></div>
+            <div class="feature-name">AR Broadcast</div>
+            <div class="feature-desc">Augmented reality overlays transform how you experience every ball.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(13,214,192,0.12)"><i class="fas fa-bolt" style="color:var(--teal)"></i></div>
+            <div class="feature-name">Smart Venues</div>
+            <div class="feature-desc">Stadiums with next-gen sensors, dynamic lighting, and holographic displays.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(232,56,90,0.12)"><i class="fas fa-network-wired" style="color:var(--rose)"></i></div>
+            <div class="feature-name">Fan Connect</div>
+            <div class="feature-desc">Interactive fan zones, NFT collectibles, and live stadium engagement tech.</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual reveal-left">
+        <div class="phase-card">
+          <div class="section-eyebrow" style="margin-bottom:20px">Season 2025 Breakdown</div>
+          <div class="phase-item">
+            <div class="phase-header">
+              <span class="phase-name">League Phase</span>
+              <span class="phase-count">28 Matches</span>
+            </div>
+            <div class="phase-bar"><div class="phase-fill" style="width:70%;background:linear-gradient(90deg,var(--gold),var(--rose))"></div></div>
+          </div>
+          <div class="phase-item">
+            <div class="phase-header">
+              <span class="phase-name">Semi Finals</span>
+              <span class="phase-count">2 Matches</span>
+            </div>
+            <div class="phase-bar"><div class="phase-fill" style="width:20%;background:linear-gradient(90deg,var(--indigo),var(--teal))"></div></div>
+          </div>
+          <div class="phase-item">
+            <div class="phase-header">
+              <span class="phase-name">Grand Final</span>
+              <span class="phase-count">1 Match</span>
+            </div>
+            <div class="phase-bar"><div class="phase-fill" style="width:10%;background:linear-gradient(90deg,var(--rose),var(--gold))"></div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:16px;text-align:center">
+              <i class="fas fa-trophy" style="color:var(--gold);font-size:20px;margin-bottom:8px;display:block"></i>
+              <div style="font-family:var(--font-display);font-size:12px;color:var(--white);font-weight:700">Grand Final</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">Dec 28, 2025</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:16px;text-align:center">
+              <i class="fas fa-location-dot" style="color:var(--rose);font-size:20px;margin-bottom:8px;display:block"></i>
+              <div style="font-family:var(--font-display);font-size:12px;color:var(--white);font-weight:700">Cyber Arena</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">Mumbai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BANNER -->
+<div class="stats-banner">
+  <div class="stats-row">
+    <div class="stat-big reveal"><div class="stat-big-num">8</div><div class="stat-big-lbl">Elite Teams</div></div>
+    <div class="stat-big reveal" style="transition-delay:0.1s"><div class="stat-big-num">40</div><div class="stat-big-lbl">Matches Played</div></div>
+    <div class="stat-big reveal" style="transition-delay:0.2s"><div class="stat-big-num">6</div><div class="stat-big-lbl">Venues</div></div>
+    <div class="stat-big reveal" style="transition-delay:0.3s"><div class="stat-big-num">₹5Cr</div><div class="stat-big-lbl">Prize Pool</div></div>
+  </div>
+</div>
+
+<!-- CTA SECTION -->
+<section class="cta-section">
+  <div class="reveal">
+    <div class="section-eyebrow" style="justify-content:center">Registration Open</div>
+    <h2 class="cta-title">Ready to be part of <span style="background:linear-gradient(135deg,var(--gold2),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">History?</span></h2>
+    <p class="cta-sub">Join the Cricko revolution. Track live scores, follow your teams, and experience cricket reimagined.</p>
+    <div class="cta-btns">
+      <a href="signup.html" class="btn-primary"><i class="fas fa-user-plus"></i> Create Account</a>
+      <a href="contact.html" class="btn-outline"><i class="fas fa-envelope"></i> Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <a href="index.html" class="logo" style="margin-bottom:4px">
+          <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+          <span class="logo-text">CRICKO</span>
+        </a>
+        <p class="footer-brand-desc">Where cricket transcends tradition and becomes a spectacle of human excellence enhanced by technology.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-discord"></i></a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigation</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+          <li><a href="players.html">Players</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="signup.html">Sign Up</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-links">
+          <li><a href="mailto:hello@cricko.in"><i class="fas fa-envelope" style="color:var(--gold);margin-right:8px;font-size:12px"></i>hello@cricko.in</a></li>
+          <li><a href="#"><i class="fas fa-phone" style="color:var(--gold);margin-right:8px;font-size:12px"></i>+91 98765 43210</a></li>
+          <li><a href="#"><i class="fas fa-location-dot" style="color:var(--gold);margin-right:8px;font-size:12px"></i>Mumbai, India</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 CRICKO TOURNAMENT — ALL RIGHTS RESERVED</p>
+      <p class="footer-love">Made with <span>♥</span> for the love of cricket</p>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /content -->
+
+<script>
+// Hamburger
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal, .reveal-left');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.style.background = window.scrollY > 50
+    ? 'rgba(6,7,15,0.95)'
+    : 'rgba(6,7,15,0.7)';
+});
+</script>
+<script src="assets/js/chatbot.js"></script>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

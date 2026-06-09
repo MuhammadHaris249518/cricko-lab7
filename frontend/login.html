@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login — CRICKO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/theme.css"/>
+<link rel="stylesheet" href="assets/css/chatbot.css"/>
+<style>
+:root {
+  --bg: #06070f;
+  --bg2: #0d0f1e;
+  --gold: #f0a500;
+  --gold2: #ffd166;
+  --rose: #e8385a;
+  --indigo: #6366f1;
+  --teal: #0dd6c0;
+  --white: #f0f2ff;
+  --muted: #6b7280;
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.08);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.mesh-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 90% 10%, rgba(99,102,241,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 80%, rgba(232,56,90,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(240,165,0,0.04) 0%, transparent 60%);
+}
+.noise-overlay {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.grid-lines {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(99,102,241,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.content { position: relative; z-index: 2; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 40px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,7,15,0.85);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+}
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px;
+  box-shadow: 4px 4px 20px rgba(240,165,0,0.3);
+  transform: perspective(200px) rotateY(-5deg);
+}
+.logo-text {
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  background: linear-gradient(135deg, var(--gold2), var(--gold), var(--rose));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  letter-spacing: 3px;
+}
+.nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.3s; position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1.5px; background: linear-gradient(90deg, var(--gold), var(--rose));
+  transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--white); }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+.nav-signup-btn {
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  color: #06070f; padding: 9px 22px; border-radius: 8px;
+  font-family: var(--font-display); font-weight: 700; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+  box-shadow: 0 4px 16px rgba(240,165,0,0.25); transition: all 0.3s;
+}
+.nav-signup-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(240,165,0,0.35); color: #06070f; }
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+.mobile-menu { display: none; position: absolute; top: 70px; left: 0; right: 0; background: rgba(6,7,15,0.97); backdrop-filter: blur(30px); border-bottom: 1px solid var(--glass-border); padding: 24px 40px; flex-direction: column; gap: 16px; }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { text-decoration: none; color: var(--muted); font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.3s; padding: 8px 0; border-bottom: 1px solid var(--glass-border); }
+.mobile-menu a:hover { color: var(--gold); }
+
+/* FULL SCREEN SPLIT LAYOUT */
+.login-wrapper {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 70px;
+}
+
+/* LEFT PANEL */
+.login-left {
+  background: linear-gradient(160deg, rgba(99,102,241,0.08), rgba(232,56,90,0.06), rgba(240,165,0,0.04));
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.left-orb1 {
+  position: absolute; top: -100px; right: -100px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.left-orb2 {
+  position: absolute; bottom: -80px; left: -80px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,56,90,0.10) 0%, transparent 70%);
+  animation: orbFloat 10s ease-in-out infinite reverse;
+}
+@keyframes orbFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+
+.left-eyebrow {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--indigo);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.left-eyebrow::before { content:''; width:20px; height:1.5px; background:linear-gradient(90deg,var(--indigo),var(--rose)); }
+.left-title {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(36px, 4vw, 54px); line-height: 1.05;
+  letter-spacing: -0.5px; margin-bottom: 16px;
+}
+.left-title .accent {
+  background: linear-gradient(135deg, var(--indigo) 0%, var(--teal) 60%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.left-desc { color: rgba(240,242,255,0.5); font-size: 15px; line-height: 1.7; margin-bottom: 48px; max-width: 380px; }
+.feature-list { display: flex; flex-direction: column; gap: 16px; }
+.feature-row {
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 16px 20px;
+  transition: all 0.3s;
+}
+.feature-row:hover { border-color: rgba(99,102,241,0.25); background: rgba(99,102,241,0.04); transform: translateX(4px); }
+.feature-row-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.feature-row-text {}
+.feature-row-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.feature-row-desc { font-size: 12px; color: var(--muted); }
+
+/* 3D floating cricket bat decoration */
+.deco-bat {
+  position: absolute;
+  right: 40px; bottom: 80px;
+  font-size: 80px; opacity: 0.06;
+  animation: decoSpin 20s linear infinite;
+  filter: blur(1px);
+}
+@keyframes decoSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* RIGHT PANEL — Login Form */
+.login-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 60px;
+  position: relative;
+}
+.login-form-wrap { width: 100%; max-width: 420px; }
+
+.form-header { text-align: center; margin-bottom: 36px; }
+.form-logo-badge {
+  width: 64px; height: 64px; margin: 0 auto 20px;
+  background: linear-gradient(135deg, var(--indigo), var(--teal));
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  box-shadow: 0 12px 40px rgba(99,102,241,0.3), 0 0 0 8px rgba(99,102,241,0.08);
+  transform: perspective(200px) rotateY(-5deg) rotateX(3deg);
+  animation: badgeFloat 5s ease-in-out infinite;
+}
+@keyframes badgeFloat { 0%,100%{transform:perspective(200px) rotateY(-5deg) rotateX(3deg) translateY(0)} 50%{transform:perspective(200px) rotateY(-3deg) rotateX(2deg) translateY(-6px)} }
+.form-title {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 30px; letter-spacing: -0.3px; margin-bottom: 6px;
+}
+.form-title span {
+  background: linear-gradient(135deg, var(--indigo), var(--teal));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.form-subtitle { color: var(--muted); font-size: 14px; }
+
+.form-card {
+  background: linear-gradient(145deg, rgba(99,102,241,0.06), rgba(13,214,192,0.04), rgba(240,165,0,0.03));
+  border: 1px solid rgba(99,102,241,0.15);
+  border-radius: 24px; padding: 36px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  backdrop-filter: blur(20px);
+  position: relative;
+  animation: cardIn 0.6s ease both;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.form-card::before {
+  content: ''; position: absolute; top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--indigo), var(--teal), transparent);
+}
+
+.form-group { margin-bottom: 20px; }
+label {
+  display: block; font-family: var(--font-display); font-size: 11px;
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(240,242,255,0.6); margin-bottom: 10px;
+}
+.input-wrap { position: relative; }
+.input-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: 14px; pointer-events: none; transition: color 0.3s;
+}
+.form-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  color: var(--white); font-family: var(--font-body); font-size: 15px;
+  padding: 14px 16px 14px 42px;
+  border-radius: 10px; outline: none; transition: all 0.3s;
+}
+.form-input::placeholder { color: rgba(107,114,128,0.7); }
+.form-input:focus {
+  border-color: rgba(99,102,241,0.5);
+  background: rgba(99,102,241,0.04);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1), 0 4px 20px rgba(0,0,0,0.3);
+}
+.form-input:focus ~ .input-icon, .input-wrap:focus-within .input-icon { color: var(--indigo); }
+.form-input.is-error { border-color: rgba(232,56,90,0.6); background: rgba(232,56,90,0.03); box-shadow: 0 0 0 3px rgba(232,56,90,0.08); }
+.input-action {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 17px;
+  color: var(--muted); transition: color 0.3s; line-height: 1;
+}
+.input-action:hover { color: var(--indigo); }
+
+.field-msg {
+  font-size: 12px; margin-top: 7px;
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px;
+  opacity: 0; height: 0; overflow: hidden; transition: all 0.3s;
+}
+.field-msg.show { opacity: 1; height: 20px; }
+.field-msg.error { color: #f87171; }
+
+/* FORGOT */
+.forgot-row {
+  text-align: right; margin-bottom: 24px;
+}
+.forgot-link {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: rgba(99,102,241,0.7);
+  text-decoration: none; transition: color 0.3s;
+}
+.forgot-link:hover { color: var(--teal); }
+
+/* SUBMIT */
+.btn-submit {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, var(--indigo), #4f46e5, var(--teal));
+  color: var(--white);
+  font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  letter-spacing: 2px; text-transform: uppercase;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+  box-shadow: 0 8px 30px rgba(99,102,241,0.3);
+}
+.btn-submit::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(99,102,241,0.45); }
+.btn-submit:hover::before { opacity: 1; }
+.btn-submit:active { transform: translateY(0); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* OR DIVIDER */
+.or-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 24px 0; color: var(--muted); font-size: 12px;
+  font-family: var(--font-display); letter-spacing: 1px; text-transform: uppercase;
+}
+.or-divider::before, .or-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: rgba(255,255,255,0.06);
+}
+
+/* SUCCESS */
+.success-overlay {
+  display: none;
+  background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(13,214,192,0.08));
+  border: 1px solid rgba(13,214,192,0.3);
+  border-radius: 14px; padding: 28px; text-align: center; margin-top: 20px;
+  animation: cardIn 0.5s ease;
+}
+.success-overlay.show { display: block; }
+.success-icon-wrap {
+  width: 58px; height: 58px; margin: 0 auto 14px;
+  background: linear-gradient(135deg, var(--indigo), var(--teal));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;
+  box-shadow: 0 8px 30px rgba(99,102,241,0.3);
+}
+.success-title { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--teal); margin-bottom: 6px; }
+.success-sub { color: rgba(240,242,255,0.6); font-size: 13px; }
+
+/* SIGNUP LINK */
+.signup-link-row { text-align: center; margin-top: 24px; color: var(--muted); font-size: 14px; }
+.signup-link-row a { color: var(--gold); text-decoration: none; font-weight: 600; transition: color 0.3s; }
+.signup-link-row a:hover { color: var(--gold2); }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--glass-border); padding: 28px 40px; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-copy { font-size: 13px; color: var(--muted); font-family: var(--font-display); letter-spacing: 0.5px; }
+
+@media (max-width: 900px) {
+  .login-wrapper { grid-template-columns: 1fr; }
+  .login-left { display: none; }
+  .login-right { padding: 40px 24px; }
+  .nav-links, .nav-signup-btn { display: none; }
+  .hamburger { display: flex; }
+  nav { padding: 0 24px; }
+  footer { padding: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="noise-overlay"></div>
+<div class="grid-lines"></div>
+<div class="content">
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+    <span class="logo-text">CRICKO</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="schedule.html">Schedule</a></li>
+    <li><a href="players.html">Players</a></li>
+    <li><a href="tournament.html">Tournament</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="login.html" class="active">Login</a></li>
+  </ul>
+  <a href="signup.html" class="nav-signup-btn">Sign Up</a>
+  <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+    <i class="fas fa-sun"></i>
+  </button>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="schedule.html">Schedule</a>
+    <a href="players.html">Players</a>
+    <a href="tournament.html">Tournament</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html">Login</a>
+    <a href="signup.html" style="color:var(--gold)">Sign Up Free</a>
+  </div>
+</nav>
+
+<!-- SPLIT LAYOUT -->
+<div class="login-wrapper">
+
+  <!-- LEFT PANEL -->
+  <div class="login-left">
+    <div class="left-orb1"></div>
+    <div class="left-orb2"></div>
+    <div class="deco-bat">🏏</div>
+
+    <div class="left-eyebrow">Cricko Portal</div>
+    <h2 class="left-title">Welcome<br/>Back to<br/><span class="accent">CRICKO.</span></h2>
+    <p class="left-desc">Access your personalized dashboard, track favourite teams, and stay ahead with real-time AI-powered match analytics.</p>
+
+    <div class="feature-list">
+      <div class="feature-row">
+        <div class="feature-row-icon" style="background:rgba(99,102,241,0.15)"><i class="fas fa-chart-line" style="color:var(--indigo)"></i></div>
+        <div class="feature-row-text">
+          <div class="feature-row-name">Live Analytics</div>
+          <div class="feature-row-desc">Real-time match insights & player stats</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-row-icon" style="background:rgba(240,165,0,0.12)"><i class="fas fa-bell" style="color:var(--gold)"></i></div>
+        <div class="feature-row-text">
+          <div class="feature-row-name">Smart Alerts</div>
+          <div class="feature-row-desc">Score updates & match notifications</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-row-icon" style="background:rgba(13,214,192,0.12)"><i class="fas fa-trophy" style="color:var(--teal)"></i></div>
+        <div class="feature-row-text">
+          <div class="feature-row-name">Leaderboards</div>
+          <div class="feature-row-desc">Points tables & playoff scenarios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <div class="form-header">
+        <div class="form-logo-badge"><i class="fas fa-cricket-bat-ball" style="color:var(--white)"></i></div>
+        <h1 class="form-title">Sign <span>In</span></h1>
+        <p class="form-subtitle">Enter your credentials to continue</p>
+      </div>
+
+      <div class="form-card">
+        <form id="loginForm" novalidate autocomplete="off">
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <div class="input-wrap">
+              <i class="fas fa-envelope input-icon"></i>
+              <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com"/>
+            </div>
+            <div class="field-msg error" id="emailError"><i class="fas fa-circle-xmark"></i> Email address is required</div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <div class="input-wrap">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" style="padding-right:46px"/>
+              <button type="button" class="input-action" id="toggleLoginPwd" tabindex="-1">
+                <span id="loginPwdEmoji">🙈</span>
+              </button>
+            </div>
+            <div class="field-msg error" id="passwordError"><i class="fas fa-circle-xmark"></i> Password is required</div>
+          </div>
+
+          <!-- Forgot -->
+          <div class="forgot-row">
+            <a href="#" class="forgot-link">Forgot Password?</a>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn-submit" id="loginSubmitBtn">
+            <i class="fas fa-arrow-right-to-bracket" style="margin-right:10px"></i>Launch Dashboard
+          </button>
+
+          <!-- Success -->
+          <div class="success-overlay" id="loginSuccess">
+            <div class="success-icon-wrap">✅</div>
+            <div class="success-title">Login Successful!</div>
+            <p class="success-sub">Welcome back. Redirecting to your dashboard…</p>
+          </div>
+
+        </form>
+
+        <div class="signup-link-row" style="margin-top:28px">
+          Don't have an account? <a href="signup.html">Sign up free</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /login-wrapper -->
+
+<footer>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 CRICKO TOURNAMENT — ALL RIGHTS RESERVED</p>
+    <a href="index.html" style="color:var(--muted);font-size:13px;text-decoration:none">← Back to Home</a>
+  </div>
+</footer>
+
+</div>
+
+<script>
+// ═══════════════════════════════════
+//  PASSWORD TOGGLE
+// ═══════════════════════════════════
+document.getElementById('toggleLoginPwd').addEventListener('click', function() {
+  const inp = document.getElementById('loginPassword');
+  const emoji = document.getElementById('loginPwdEmoji');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    emoji.textContent = '👁️';
+  } else {
+    inp.type = 'password';
+    emoji.textContent = '🙈';
+  }
+});
+
+// ═══════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════
+function setError(inputId, errorId, show) {
+  const inp = document.getElementById(inputId);
+  const err = document.getElementById(errorId);
+  if (show) {
+    inp.classList.add('is-error');
+    err.classList.add('show');
+  } else {
+    inp.classList.remove('is-error');
+    err.classList.remove('show');
+  }
+}
+
+// Clear on input
+document.getElementById('loginEmail').addEventListener('input', function() {
+  setError('loginEmail','emailError',false);
+});
+document.getElementById('loginPassword').addEventListener('input', function() {
+  setError('loginPassword','passwordError',false);
+});
+
+// ═══════════════════════════════════
+//  FORM SUBMIT
+// ═══════════════════════════════════
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  if (!email) { setError('loginEmail','emailError',true); valid = false; }
+  else setError('loginEmail','emailError',false);
+
+  if (!password) { setError('loginPassword','passwordError',true); valid = false; }
+  else setError('loginPassword','passwordError',false);
+
+  if (valid) {
+    const btn = document.getElementById('loginSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:10px"></i>Authenticating…';
+    setTimeout(() => {
+      document.getElementById('loginSuccess').classList.add('show');
+      document.getElementById('loginSuccess').scrollIntoView({ behavior:'smooth', block:'center' });
+    }, 800);
+  }
+});
+
+// Hamburger
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+</script>
+<script src="assets/js/chatbot.js"></script>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

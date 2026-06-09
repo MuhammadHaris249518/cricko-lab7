@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact — CRICKO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/theme.css"/>
+<link rel="stylesheet" href="assets/css/chatbot.css"/>
+<style>
+:root{--bg:#06070f;--bg2:#0d0f1e;--gold:#f0a500;--gold2:#ffd166;--rose:#e8385a;--indigo:#6366f1;--teal:#0dd6c0;--white:#f0f2ff;--muted:#6b7280;--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);--radius:14px;--font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);overflow-x:hidden;line-height:1.6;}
+.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 80% 20%,rgba(13,214,192,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 20% 80%,rgba(240,165,0,0.06) 0%,transparent 60%);}
+.noise-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(13,214,192,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(13,214,192,0.025) 1px,transparent 1px);background-size:60px 60px;}
+.content{position:relative;z-index:2;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,7,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--rose));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:4px 4px 20px rgba(240,165,0,0.3);transform:perspective(200px) rotateY(-5deg);}
+.logo-text{font-family:var(--font-display);font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--gold2),var(--gold),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px;}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--rose));transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-cta-btn{background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;padding:9px 22px;border-radius:8px;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 4px 16px rgba(240,165,0,0.25);transition:all 0.3s;}
+.nav-cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(240,165,0,0.35);color:#06070f;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;}
+.mobile-menu{display:none;position:absolute;top:70px;left:0;right:0;background:rgba(6,7,15,0.97);backdrop-filter:blur(30px);border-bottom:1px solid var(--glass-border);padding:24px 40px;flex-direction:column;gap:16px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;padding:8px 0;border-bottom:1px solid var(--glass-border);}
+.mobile-menu a:hover{color:var(--gold);}
+/* PAGE */
+.page-hero{padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden;}
+.page-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+.page-eyebrow::before{content:'';width:20px;height:1.5px;background:linear-gradient(90deg,var(--teal),var(--gold));}
+.page-title{font-family:var(--font-display);font-weight:800;font-size:clamp(42px,6vw,72px);line-height:1.05;letter-spacing:-1px;margin-bottom:16px;}
+.page-title span{background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-subtitle{color:rgba(240,242,255,0.5);font-size:17px;max-width:520px;margin:0 auto;}
+/* LAYOUT */
+.content-wrap{max-width:1200px;margin:0 auto;padding:0 40px 100px;}
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:start;}
+/* INFO CARDS */
+.info-cards{display:flex;flex-direction:column;gap:16px;}
+.info-card{background:linear-gradient(145deg,rgba(13,214,192,0.06),rgba(240,165,0,0.04));border:1px solid var(--glass-border);border-radius:16px;padding:24px;transition:all 0.3s;display:flex;gap:16px;align-items:flex-start;}
+.info-card:hover{border-color:rgba(13,214,192,0.2);transform:translateX(4px);box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+.info-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.info-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.info-value{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--white);}
+.social-row{margin-top:32px;}
+.social-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.social-icons{display:flex;gap:10px;}
+.soc-btn{width:42px;height:42px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;font-size:15px;transition:all 0.3s;}
+.soc-btn:hover{border-color:var(--teal);color:var(--teal);background:rgba(13,214,192,0.06);transform:translateY(-2px);}
+/* FORM CARD */
+.form-card{background:linear-gradient(145deg,rgba(13,214,192,0.05),rgba(240,165,0,0.04));border:1px solid rgba(13,214,192,0.12);border-radius:24px;padding:40px;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.4);}
+.form-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--teal),var(--gold),transparent);}
+.form-group{margin-bottom:20px;}
+.form-label{display:block;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(240,242,255,0.6);margin-bottom:10px;}
+.form-input{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-border);color:var(--white);font-family:var(--font-body);font-size:15px;padding:13px 16px;border-radius:10px;outline:none;transition:all 0.3s;resize:vertical;}
+.form-input::placeholder{color:rgba(107,114,128,0.7);}
+.form-input:focus{border-color:rgba(13,214,192,0.5);background:rgba(13,214,192,0.03);box-shadow:0 0 0 3px rgba(13,214,192,0.08);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--teal),var(--gold));color:#06070f;font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:10px;cursor:pointer;transition:all 0.3s;box-shadow:0 8px 24px rgba(13,214,192,0.25);}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(13,214,192,0.35);}
+.form-success{display:none;background:rgba(13,214,192,0.08);border:1px solid rgba(13,214,192,0.3);border-radius:10px;padding:20px;text-align:center;margin-top:16px;}
+.form-success.show{display:block;}
+.form-success-title{font-family:var(--font-display);font-weight:800;color:var(--teal);margin-bottom:6px;}
+/* MAP SECTION */
+.map-section{margin-top:80px;margin-bottom:40px;}
+.map-header{text-align:center;margin-bottom:40px;}
+.map-title{font-family:var(--font-display);font-weight:800;font-size:clamp(32px,5vw,48px);color:var(--white);margin-bottom:8px;line-height:1.1;}
+.map-subtitle{color:rgba(240,242,255,0.6);font-size:16px;margin-bottom:24px;}
+.map-container{width:100%;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3);margin-bottom:32px;border:1px solid var(--glass-border);}
+.map-container iframe{display:block;width:100%;height:450px;}
+.venue-details{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:40px;background:linear-gradient(145deg,rgba(240,165,0,0.04),rgba(99,102,241,0.04));border:1px solid var(--glass-border);border-radius:16px;}
+.venue-card{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--bg2);border:1px solid rgba(255,255,255,0.05);border-radius:12px;transition:all 0.3s;}
+.venue-card:hover{border-color:rgba(240,165,0,0.3);background:rgba(240,165,0,0.04);transform:translateY(-2px);}
+.venue-icon{font-size:32px;flex-shrink:0;}
+.venue-info{flex:1;}
+.venue-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.venue-value{font-size:13px;color:var(--white);line-height:1.5;}
+html[data-theme="light"] .map-title{color:#1f2937;}
+html[data-theme="light"] .map-subtitle{color:#6b7280;}
+html[data-theme="light"] .venue-details{background:linear-gradient(145deg,rgba(217,119,6,0.04),rgba(79,70,229,0.04));border-color:rgba(0,0,0,0.08);}
+html[data-theme="light"] .venue-card{background:#f8f9fa;border-color:rgba(0,0,0,0.08);}
+html[data-theme="light"] .venue-card:hover{border-color:rgba(217,119,6,0.3);background:rgba(217,119,6,0.04);}
+html[data-theme="light"] .venue-value{color:#1f2937;}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--glass-border);padding:40px;}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.5px;}
+@media(max-width:900px){nav{padding:0 24px;}.nav-links,.nav-cta-btn{display:none;}.hamburger{display:flex;}.page-hero{padding:110px 24px 60px;}.content-wrap{padding:0 24px 80px;}.contact-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.venue-details{grid-template-columns:1fr;}footer{padding:28px 24px;}}
+@media(max-width:600px){.map-container iframe{height:350px;}.venue-details{grid-template-columns:1fr;}.venue-card{padding:12px;}.venue-icon{font-size:24px;}}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="noise-overlay"></div>
+<div class="grid-lines"></div>
+<div class="content">
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+    <span class="logo-text">CRICKO</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="schedule.html">Schedule</a></li>
+    <li><a href="players.html">Players</a></li>
+    <li><a href="tournament.html">Tournament</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+    <li><a href="signup.html">Sign Up</a></li>
+  </ul>
+  <a href="login.html" class="nav-cta-btn">Login</a>
+  <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+    <i class="fas fa-sun"></i>
+  </button>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a><a href="schedule.html">Schedule</a>
+    <a href="players.html">Players</a><a href="tournament.html">Tournament</a>
+    <a href="contact.html">Contact</a>
+    <a href="signup.html">Sign Up</a><a href="login.html" style="color:var(--gold)">Login</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-eyebrow">Get In Touch</div>
+  <h1 class="page-title">Contact <span>Us</span></h1>
+  <p class="page-subtitle">Have questions about CRICKO? We'd love to hear from you.</p>
+</div>
+
+<div class="content-wrap">
+  <div class="contact-grid">
+    <!-- Info -->
+    <div>
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="info-icon" style="background:rgba(13,214,192,0.12)"><i class="fas fa-envelope" style="color:var(--teal)"></i></div>
+          <div>
+            <div class="info-label">Email</div>
+            <div class="info-value">hello@cricko.in</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon" style="background:rgba(240,165,0,0.12)"><i class="fas fa-phone" style="color:var(--gold)"></i></div>
+          <div>
+            <div class="info-label">Phone</div>
+            <div class="info-value">+91 98765 43210</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon" style="background:rgba(232,56,90,0.12)"><i class="fas fa-location-dot" style="color:var(--rose)"></i></div>
+          <div>
+            <div class="info-label">Address</div>
+            <div class="info-value">Cyber Arena, Mumbai<br/>Maharashtra, India 400001</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon" style="background:rgba(99,102,241,0.12)"><i class="fas fa-clock" style="color:var(--indigo)"></i></div>
+          <div>
+            <div class="info-label">Office Hours</div>
+            <div class="info-value">Mon–Sat, 9 AM – 7 PM IST</div>
+          </div>
+        </div>
+      </div>
+      <div class="social-row">
+        <div class="social-label">Follow Us</div>
+        <div class="social-icons">
+          <a href="#" class="soc-btn"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="soc-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="soc-btn"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="soc-btn"><i class="fab fa-discord"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div class="map-section">
+    <div class="map-header">
+      <h2 class="map-title">📍 Visit Our Venue</h2>
+      <p class="map-subtitle">Cyber Arena - Our Premium Tournament Venue</p>
+    </div>
+    <div class="map-container">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.8664471169574!2d72.82744!3d19.075981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ca6a8a6a8a8d%3A0x8a8a8a8a8a8a8a8a!2sNariman%20Point%2C%20Mumbai%2C%20Maharashtra%20400021!5e0!3m2!1sen!2sin!4v1619865000000" 
+        width="100%" 
+        height="450" 
+        style="border:0; border-radius: 12px;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        title="CRICKO - Cyber Arena Location in Mumbai">
+      </iframe>
+    </div>
+    <div class="venue-details">
+      <div class="venue-card">
+        <div class="venue-icon">📍</div>
+        <div class="venue-info">
+          <div class="venue-label">Full Address</div>
+          <div class="venue-value">Cyber Arena, Mumbai<br/>Maharashtra, India 400001</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🚗</div>
+        <div class="venue-info">
+          <div class="venue-label">How to Reach</div>
+          <div class="venue-value">Airport: 30 minutes<br/>Central Mumbai: 15 minutes</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🏟️</div>
+        <div class="venue-info">
+          <div class="venue-label">Facilities</div>
+          <div class="venue-value">Stadium | Parking | Cafeteria<br/>Restrooms | VIP Lounge</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Form Section -->
+  <div class="contact-grid">
+    <!-- Form -->
+    <div class="form-card">
+      <form id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" placeholder="John" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" placeholder="Smith" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="john@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-input" placeholder="What's this about?" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" rows="5" placeholder="Tell us more…" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn"><i class="fas fa-paper-plane" style="margin-right:10px"></i>Send Message</button>
+        <div class="form-success" id="formSuccess">
+          <div style="font-size:28px;margin-bottom:8px">✅</div>
+          <div class="form-success-title">Message Sent!</div>
+          <p style="color:rgba(240,242,255,0.6);font-size:13px;margin-top:4px">We'll get back to you within 24 hours.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 CRICKO TOURNAMENT — ALL RIGHTS RESERVED</p>
+    <p style="font-size:13px;color:var(--muted)">Made with <span style="color:var(--rose)">♥</span> for cricket</p>
+  </div>
+</footer>
+</div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('formSuccess').classList.add('show');
+  this.querySelectorAll('input,textarea').forEach(i => i.disabled = true);
+  this.querySelector('.submit-btn').disabled = true;
+  this.querySelector('.submit-btn').style.opacity = '0.5';
+});
+document.getElementById('hamburger').addEventListener('click', function(){document.getElementById('mobileMenu').classList.toggle('open');});
+window.addEventListener('scroll',()=>{document.querySelector('nav').style.background=window.scrollY>50?'rgba(6,7,15,0.95)':'rgba(6,7,15,0.85)';});
+</script>
+<script src="assets/js/chatbot.js"></script>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

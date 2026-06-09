@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Players — CRICKO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/theme.css"/>
+<link rel="stylesheet" href="assets/css/chatbot.css"/>
+<style>
+:root{--bg:#06070f;--bg2:#0d0f1e;--gold:#f0a500;--gold2:#ffd166;--rose:#e8385a;--indigo:#6366f1;--teal:#0dd6c0;--white:#f0f2ff;--muted:#6b7280;--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);--radius:16px;--font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);overflow-x:hidden;line-height:1.6;}
+.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 60% 20%,rgba(232,56,90,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 30% 80%,rgba(99,102,241,0.06) 0%,transparent 60%);}
+.noise-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:60px 60px;}
+.content{position:relative;z-index:2;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,7,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--rose));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:4px 4px 20px rgba(240,165,0,0.3);transform:perspective(200px) rotateY(-5deg);}
+.logo-text{font-family:var(--font-display);font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--gold2),var(--gold),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px;}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--rose));transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-cta-btn{background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;padding:9px 22px;border-radius:8px;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 4px 16px rgba(240,165,0,0.25);transition:all 0.3s;}
+.nav-cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(240,165,0,0.35);color:#06070f;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;}
+.mobile-menu{display:none;position:absolute;top:70px;left:0;right:0;background:rgba(6,7,15,0.97);backdrop-filter:blur(30px);border-bottom:1px solid var(--glass-border);padding:24px 40px;flex-direction:column;gap:16px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;padding:8px 0;border-bottom:1px solid var(--glass-border);}
+.mobile-menu a:hover{color:var(--gold);}
+
+/* PAGE HERO */
+.page-hero{padding:140px 40px 60px;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(232,56,90,0.06),transparent);pointer-events:none;}
+.page-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:16px;}
+.page-eyebrow::before{content:'';width:20px;height:1.5px;background:linear-gradient(90deg,var(--rose),var(--gold));}
+.page-title{font-family:var(--font-display);font-weight:800;font-size:clamp(42px,6vw,72px);line-height:1.05;letter-spacing:-1px;margin-bottom:16px;}
+.page-title span{background:linear-gradient(135deg,var(--rose),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-subtitle{color:rgba(240,242,255,0.5);font-size:17px;max-width:520px;margin:0 auto;}
+
+/* ── SEARCH & FILTER CONTROLS ── */
+.content-wrap{max-width:1200px;margin:0 auto;padding:0 40px 100px;}
+
+.controls-section{margin-bottom:36px;}
+
+/* Search box */
+.search-wrap{position:relative;margin-bottom:20px;}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none;}
+#playerSearch{
+  width:100%;padding:14px 18px 14px 48px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);
+  border-radius:12px;color:var(--white);font-family:var(--font-body);font-size:15px;
+  outline:none;transition:all 0.3s;
+}
+#playerSearch::placeholder{color:var(--muted);}
+#playerSearch:focus{border-color:rgba(232,56,90,0.5);background:rgba(232,56,90,0.04);box-shadow:0 0 0 3px rgba(232,56,90,0.08);}
+
+/* Filters row */
+.filters-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+
+.filter-bar{display:flex;gap:2px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:4px;flex-wrap:wrap;}
+.filter-btn{background:none;border:none;color:var(--muted);font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:9px 18px;border-radius:7px;cursor:pointer;transition:all 0.3s;}
+.filter-btn.active,.filter-btn:hover{background:rgba(232,56,90,0.1);color:var(--rose);}
+
+/* Rank select */
+.rank-select-wrap{position:relative;}
+.rank-select-wrap::after{content:'\f078';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px;pointer-events:none;}
+#rankSelect{
+  appearance:none;-webkit-appearance:none;
+  background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);
+  color:var(--white);font-family:var(--font-display);font-size:12px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:10px 42px 10px 18px;border-radius:10px;cursor:pointer;outline:none;
+  transition:all 0.3s;
+}
+#rankSelect:hover,#rankSelect:focus{border-color:rgba(240,165,0,0.4);color:var(--gold);}
+#rankSelect option{background:#0d0f1e;color:var(--white);}
+#rankSelect.active-filter{border-color:rgba(240,165,0,0.6);color:var(--gold);background:rgba(240,165,0,0.06);}
+
+/* Results count */
+.results-count{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:10px 0;margin-bottom:8px;}
+.results-count span{color:var(--gold);}
+
+/* ── PLAYER CARDS GRID ── */
+.players-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
+
+/* Flip animations */
+@keyframes flipIn{
+  0%{transform:perspective(600px) rotateY(-90deg) scale(0.9);opacity:0;}
+  60%{transform:perspective(600px) rotateY(8deg) scale(1.02);}
+  100%{transform:perspective(600px) rotateY(0deg) scale(1);opacity:1;}
+}
+@keyframes flipOut{
+  0%{transform:perspective(600px) rotateY(0deg) scale(1);opacity:1;}
+  100%{transform:perspective(600px) rotateY(90deg) scale(0.9);opacity:0;}
+}
+.flip-in{animation:flipIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;}
+.flip-out{animation:flipOut 0.18s ease-in both;}
+
+/* PLAYER CARD */
+.player-card{
+  background:linear-gradient(145deg,rgba(232,56,90,0.05),rgba(99,102,241,0.04),rgba(240,165,0,0.03));
+  border:1px solid var(--glass-border);border-radius:20px;padding:28px 20px;text-align:center;
+  transition:border-color 0.4s,box-shadow 0.4s,transform 0.4s;
+  position:relative;overflow:hidden;cursor:default;
+  transform-style:preserve-3d;
+}
+.player-card:hover{
+  border-color:rgba(240,165,0,0.25);
+  transform:translateY(-8px) perspective(600px) rotateX(3deg);
+  box-shadow:0 30px 70px rgba(0,0,0,0.5),0 0 0 1px rgba(240,165,0,0.1);
+}
+.player-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--rose),var(--gold));opacity:0;transition:opacity 0.4s;}
+.player-card:hover::before{opacity:1;}
+
+/* Top 3 card glow */
+.card-top3{
+  border-color:rgba(240,165,0,0.22)!important;
+  background:linear-gradient(145deg,rgba(240,165,0,0.08),rgba(232,56,90,0.06),rgba(99,102,241,0.04))!important;
+  box-shadow:0 0 30px rgba(240,165,0,0.07),inset 0 0 30px rgba(240,165,0,0.03);
+}
+.card-top3::before{opacity:0.6!important;}
+.card-top3:hover{box-shadow:0 30px 70px rgba(0,0,0,0.5),0 0 40px rgba(240,165,0,0.2)!important;}
+
+/* Top 5 subtle glow */
+.card-top5{border-color:rgba(99,102,241,0.2)!important;}
+
+/* Rank number watermark */
+.rank-number{
+  position:absolute;bottom:12px;right:16px;
+  font-family:var(--font-display);font-weight:800;font-size:42px;
+  color:rgba(255,255,255,0.04);line-height:1;pointer-events:none;
+  user-select:none;
+}
+.card-top3 .rank-number{color:rgba(240,165,0,0.08);}
+
+/* Rank badge */
+.rank-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-display);font-size:9px;font-weight:800;
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:4px 10px;border-radius:100px;margin-bottom:10px;
+}
+.rank-gold{background:linear-gradient(135deg,#f0a500,#ffd166);color:#06070f;box-shadow:0 0 16px rgba(240,165,0,0.4);}
+.rank-silver{background:linear-gradient(135deg,#9ca3af,#e5e7eb);color:#06070f;box-shadow:0 0 12px rgba(156,163,175,0.3);}
+.rank-bronze{background:linear-gradient(135deg,#cd7f32,#e8a44a);color:#06070f;box-shadow:0 0 12px rgba(205,127,50,0.3);}
+.rank-normal{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:var(--indigo);}
+.diamond-icon{font-size:10px;animation:diamondPulse 2s ease-in-out infinite;}
+@keyframes diamondPulse{0%,100%{transform:scale(1);filter:brightness(1);}50%{transform:scale(1.25);filter:brightness(1.4);}}
+
+/* Avatar */
+.player-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;}
+.player-avatar::after{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid transparent;background:linear-gradient(135deg,var(--gold),var(--rose)) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;opacity:0;transition:opacity 0.4s;}
+.player-card:hover .player-avatar::after{opacity:1;}
+.card-top3 .player-avatar::after{opacity:0.5;}
+
+.player-name{font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:4px;color:var(--white);}
+.player-role{font-size:11px;color:var(--gold);font-family:var(--font-display);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.player-team{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.player-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pstat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:10px 8px;}
+.pstat-num{font-family:var(--font-display);font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--gold2),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.pstat-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:var(--font-display);margin-top:3px;}
+.captain-badge{position:absolute;top:14px;right:14px;background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;font-family:var(--font-display);font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:100px;text-transform:uppercase;}
+
+/* No results */
+.no-results{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);}
+.no-results-icon{font-size:48px;margin-bottom:16px;}
+.no-results p{font-family:var(--font-display);font-size:14px;letter-spacing:1px;text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--glass-border);padding:40px;}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.5px;}
+
+@media(max-width:900px){
+  nav{padding:0 24px;}
+  .nav-links,.nav-cta-btn{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:110px 24px 50px;}
+  .content-wrap{padding:0 24px 80px;}
+  footer{padding:28px 24px;}
+  .filters-row{flex-direction:column;align-items:stretch;}
+  .rank-select-wrap,#rankSelect{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="noise-overlay"></div>
+<div class="grid-lines"></div>
+<div class="content">
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+    <span class="logo-text">CRICKO</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="schedule.html">Schedule</a></li>
+    <li><a href="players.html" class="active">Players</a></li>
+    <li><a href="tournament.html">Tournament</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="signup.html">Sign Up</a></li>
+  </ul>
+  <a href="login.html" class="nav-cta-btn">Login</a>
+  <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+    <i class="fas fa-sun"></i>
+  </button>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a><a href="schedule.html">Schedule</a>
+    <a href="players.html">Players</a><a href="tournament.html">Tournament</a>
+    <a href="contact.html">Contact</a>
+    <a href="signup.html">Sign Up</a><a href="login.html" style="color:var(--gold)">Login</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-eyebrow">Season Roster</div>
+  <h1 class="page-title">Elite <span>Players</span></h1>
+  <p class="page-subtitle">The finest cricketing talent assembled for Season 2025. Search, filter, and explore.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- ── Controls Section ── -->
+  <div class="controls-section">
+
+    <!-- Search Box -->
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input
+        type="text"
+        id="playerSearch"
+        placeholder="Search player by name…"
+        oninput="onSearchInput(this.value)"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Filters Row: Role tabs + Rank dropdown -->
+    <div class="filters-row">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterByRole('all',this)">All</button>
+        <button class="filter-btn" onclick="filterByRole('Batter',this)">Batters</button>
+        <button class="filter-btn" onclick="filterByRole('Bowler',this)">Bowlers</button>
+        <button class="filter-btn" onclick="filterByRole('All-Rounder',this)">All-Rounders</button>
+        <button class="filter-btn" onclick="filterByRole('Wicket-Keeper',this)">Keepers</button>
+      </div>
+
+      <div class="rank-select-wrap">
+        <select id="rankSelect" onchange="filterByRank(this.value)">
+          <option value="all">All Ranks</option>
+          <option value="top3">💎 Top 3 (Diamond)</option>
+          <option value="top5">⭐ Top 5</option>
+          <option value="top10">🏅 Top 10</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Results count -->
+    <div class="results-count" id="resultsCount">Showing <span id="countNum">—</span> players</div>
+  </div>
+
+  <div class="players-grid" id="playersGrid"></div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 CRICKO TOURNAMENT — ALL RIGHTS RESERVED</p>
+    <p style="font-size:13px;color:var(--muted)">Made with <span style="color:var(--rose)">♥</span> for cricket</p>
+  </div>
+</footer>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/players.js"></script>
+<script>
+  // ── Patch renderPlayers to also update count ──────────────────────────────
+  var _origRender = renderPlayers;
+  renderPlayers = function(players) {
+    _origRender(players);
+    setTimeout(function() {
+      var num = document.querySelectorAll("#playersGrid .player-card").length;
+      document.getElementById("countNum").textContent = num;
+    }, 300);
+  };
+
+  // Navigation
+  document.getElementById('hamburger').addEventListener('click', function () {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
+  window.addEventListener('scroll', function () {
+    document.querySelector('nav').style.background =
+      window.scrollY > 50 ? 'rgba(6,7,15,0.95)' : 'rgba(6,7,15,0.85)';
+  });
+</script>
+<script src="assets/js/chatbot.js"></script>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

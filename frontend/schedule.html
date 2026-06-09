@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Schedule — CRICKO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/theme.css"/>
+<link rel="stylesheet" href="assets/css/chatbot.css"/>
+<style>
+:root{--bg:#06070f;--bg2:#0d0f1e;--gold:#f0a500;--gold2:#ffd166;--rose:#e8385a;--indigo:#6366f1;--teal:#0dd6c0;--white:#f0f2ff;--muted:#6b7280;--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);--radius:14px;--font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);overflow-x:hidden;line-height:1.6;}
+.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 30% 20%,rgba(240,165,0,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 70% 80%,rgba(99,102,241,0.06) 0%,transparent 60%);}
+.noise-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(240,165,0,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(240,165,0,0.025) 1px,transparent 1px);background-size:60px 60px;}
+.content{position:relative;z-index:2;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,7,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--rose));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:4px 4px 20px rgba(240,165,0,0.3);transform:perspective(200px) rotateY(-5deg);}
+.logo-text{font-family:var(--font-display);font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--gold2),var(--gold),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px;}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--rose));transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-cta-btn{background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;padding:9px 22px;border-radius:8px;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 4px 16px rgba(240,165,0,0.25);transition:all 0.3s;}
+.nav-cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(240,165,0,0.35);color:#06070f;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;}
+.mobile-menu{display:none;position:absolute;top:70px;left:0;right:0;background:rgba(6,7,15,0.97);backdrop-filter:blur(30px);border-bottom:1px solid var(--glass-border);padding:24px 40px;flex-direction:column;gap:16px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;padding:8px 0;border-bottom:1px solid var(--glass-border);}
+.mobile-menu a:hover{color:var(--gold);}
+/* HERO */
+.page-hero{padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:300px;background:radial-gradient(ellipse,rgba(240,165,0,0.07),transparent);pointer-events:none;}
+.page-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.page-eyebrow::before{content:'';width:20px;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--rose));}
+.page-title{font-family:var(--font-display);font-weight:800;font-size:clamp(42px,6vw,72px);line-height:1.05;letter-spacing:-1px;margin-bottom:16px;}
+.page-title span{background:linear-gradient(135deg,var(--gold2),var(--gold),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-subtitle{color:rgba(240,242,255,0.5);font-size:17px;max-width:520px;margin:0 auto;}
+/* CONTENT */
+.content-wrap{max-width:1200px;margin:0 auto;padding:0 40px 100px;}
+/* FILTER TABS */
+.filter-bar{display:flex;gap:2px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:4px;flex-wrap:wrap;margin-bottom:28px;}
+.filter-btn{background:none;border:none;color:var(--muted);font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:9px 18px;border-radius:7px;cursor:pointer;transition:all 0.3s;}
+.filter-btn.active,.filter-btn:hover{background:rgba(240,165,0,0.1);color:var(--gold);}
+/* LEGEND */
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:28px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;font-family:var(--font-display);color:var(--muted);font-weight:600;letter-spacing:1px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;}
+/* TABLE */
+.table-wrap{background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);border-radius:18px;overflow:hidden;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:700px;}
+thead tr{background:rgba(240,165,0,0.06);border-bottom:1px solid rgba(240,165,0,0.12);}
+th{padding:16px 20px;text-align:left;font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);}
+td{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(240,242,255,0.8);font-size:14px;vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(240,165,0,0.03);}
+.team-cell{font-family:var(--font-display);font-weight:700;color:var(--white);}
+.vs-sep{color:var(--rose);font-weight:800;margin:0 8px;}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 10px;border-radius:100px;}
+.badge-live{background:rgba(232,56,90,0.12);color:var(--rose);border:1px solid rgba(232,56,90,0.25);}
+.badge-live::before{content:'';width:5px;height:5px;background:var(--rose);border-radius:50%;animation:blink 1.2s infinite;}
+.badge-upcoming{background:rgba(99,102,241,0.12);color:var(--indigo);border:1px solid rgba(99,102,241,0.2);}
+.badge-completed{background:rgba(107,114,128,0.1);color:var(--muted);border:1px solid rgba(107,114,128,0.15);}
+.badge-final{background:rgba(240,165,0,0.12);color:var(--gold);border:1px solid rgba(240,165,0,0.25);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;}
+.summary-card{background:linear-gradient(145deg,rgba(240,165,0,0.05),rgba(99,102,241,0.04));border:1px solid var(--glass-border);border-radius:16px;padding:24px;transition:all 0.3s;}
+.summary-card:hover{border-color:rgba(240,165,0,0.2);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.4);}
+.summary-num{font-family:var(--font-display);font-weight:800;font-size:36px;background:linear-gradient(135deg,var(--gold2),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.summary-lbl{font-family:var(--font-display);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--glass-border);padding:40px;}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.5px;}
+@media(max-width:900px){nav{padding:0 24px;}.nav-links,.nav-cta-btn{display:none;}.hamburger{display:flex;}.page-hero{padding:110px 24px 60px;}.content-wrap{padding:0 24px 80px;}.summary-grid{grid-template-columns:1fr 1fr;}footer{padding:28px 24px;}}
+@media(max-width:500px){.summary-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="noise-overlay"></div>
+<div class="grid-lines"></div>
+<div class="content">
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+    <span class="logo-text">CRICKO</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="schedule.html" class="active">Schedule</a></li>
+    <li><a href="players.html">Players</a></li>
+    <li><a href="tournament.html">Tournament</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="signup.html">Sign Up</a></li>
+  </ul>
+  <a href="login.html" class="nav-cta-btn">Login</a>
+  <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+    <i class="fas fa-sun"></i>
+  </button>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a><a href="schedule.html">Schedule</a>
+    <a href="players.html">Players</a><a href="tournament.html">Tournament</a>
+    <a href="contact.html">Contact</a>
+    <a href="signup.html">Sign Up</a><a href="login.html" style="color:var(--gold)">Login</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-eyebrow">Match Fixtures</div>
+  <h1 class="page-title">Full <span>Schedule</span></h1>
+  <p class="page-subtitle">Every match, every venue — stay on top of the entire Season 2025 calendar.</p>
+</div>
+
+<div class="content-wrap">
+  <!-- Filter -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterMatches('all',this)">All Matches</button>
+    <button class="filter-btn" onclick="filterMatches('live',this)">🔴 Live</button>
+    <button class="filter-btn" onclick="filterMatches('upcoming',this)">Upcoming</button>
+    <button class="filter-btn" onclick="filterMatches('completed',this)">Completed</button>
+    <button class="filter-btn" onclick="filterMatches('final',this)">🏆 Finals</button>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>Live</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--indigo)"></div>Upcoming</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Completed</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Grand Final</div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table id="scheduleTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Match</th>
+          <th>Venue</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Phase</th>
+        </tr>
+      </thead>
+      <tbody id="scheduleBody">
+        <!-- Rows injected by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid" style="margin-top:40px">
+    <div class="summary-card">
+      <div class="summary-num">28</div>
+      <div class="summary-lbl">League Matches</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-num">2</div>
+      <div class="summary-lbl">Semi Finals</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-num">1</div>
+      <div class="summary-lbl" style="color:var(--gold)">Grand Final — Dec 28</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 CRICKO TOURNAMENT — ALL RIGHTS RESERVED</p>
+    <p style="font-size:13px;color:var(--muted)">Made with <span style="color:var(--rose)">♥</span> for cricket</p>
+  </div>
+</footer>
+</div>
+
+<script>
+const matches = [
+  {id:1,home:'Mumbai Kings',away:'Delhi Dragons',venue:'Cyber Arena, Mumbai',date:'Nov 1',time:'7:30 PM',status:'completed',phase:'League'},
+  {id:2,home:'Kolkata Thunder',away:'Chennai Blaze',venue:'Eden Gardens, Kolkata',date:'Nov 3',time:'3:00 PM',status:'completed',phase:'League'},
+  {id:3,home:'Rajasthan Rockets',away:'Punjab Panthers',venue:'SMS Stadium, Jaipur',date:'Nov 5',time:'7:30 PM',status:'completed',phase:'League'},
+  {id:4,home:'Hyderabad Hawks',away:'Bengaluru Bulls',venue:'Rajiv Gandhi, Hyd',date:'Nov 7',time:'3:00 PM',status:'completed',phase:'League'},
+  {id:5,home:'Mumbai Kings',away:'Kolkata Thunder',venue:'Cyber Arena, Mumbai',date:'Nov 9',time:'7:30 PM',status:'completed',phase:'League'},
+  {id:6,home:'Chennai Blaze',away:'Rajasthan Rockets',venue:'Chepauk, Chennai',date:'Nov 11',time:'3:00 PM',status:'completed',phase:'League'},
+  {id:7,home:'Delhi Dragons',away:'Punjab Panthers',venue:'Kotla, Delhi',date:'Nov 13',time:'7:30 PM',status:'live',phase:'League'},
+  {id:8,home:'Bengaluru Bulls',away:'Mumbai Kings',venue:'Chinnaswamy, Bangalore',date:'Nov 15',time:'3:00 PM',status:'upcoming',phase:'League'},
+  {id:9,home:'Hyderabad Hawks',away:'Delhi Dragons',venue:'Rajiv Gandhi, Hyd',date:'Nov 17',time:'7:30 PM',status:'upcoming',phase:'League'},
+  {id:10,home:'Rajasthan Rockets',away:'Kolkata Thunder',venue:'SMS Stadium, Jaipur',date:'Nov 19',time:'3:00 PM',status:'upcoming',phase:'League'},
+  {id:11,home:'Punjab Panthers',away:'Chennai Blaze',venue:'PCA, Mohali',date:'Nov 21',time:'7:30 PM',status:'upcoming',phase:'League'},
+  {id:12,home:'Mumbai Kings',away:'Hyderabad Hawks',venue:'Cyber Arena, Mumbai',date:'Nov 24',time:'3:00 PM',status:'upcoming',phase:'League'},
+  {id:13,home:'TBD',away:'TBD',venue:'TBD',date:'Dec 14',time:'3:00 PM',status:'upcoming',phase:'Semi Final 1'},
+  {id:14,home:'TBD',away:'TBD',venue:'TBD',date:'Dec 16',time:'7:30 PM',status:'upcoming',phase:'Semi Final 2'},
+  {id:15,home:'TBD',away:'TBD',venue:'Cyber Arena, Mumbai',date:'Dec 28',time:'7:30 PM',status:'upcoming',phase:'Grand Final'},
+];
+
+function badgeHTML(status) {
+  const map = {
+    live: '<span class="badge badge-live">Live</span>',
+    upcoming: '<span class="badge badge-upcoming">Upcoming</span>',
+    completed: '<span class="badge badge-completed">Completed</span>',
+    final: '<span class="badge badge-final">🏆 Final</span>',
+  };
+  return map[status] || map.upcoming;
+}
+
+function phaseClass(phase) {
+  if(phase.includes('Final') && !phase.includes('Semi')) return 'final';
+  if(phase.includes('Semi')) return '';
+  return '';
+}
+
+function renderMatches(filter) {
+  const tbody = document.getElementById('scheduleBody');
+  const filtered = filter === 'all' ? matches : matches.filter(m => {
+    if(filter === 'final') return m.phase === 'Grand Final';
+    return m.status === filter;
+  });
+  tbody.innerHTML = filtered.map((m,i) => {
+    const st = m.phase === 'Grand Final' ? 'final' : m.status;
+    const rowStyle = m.phase === 'Grand Final' ? 'border-left: 3px solid var(--gold);' : '';
+    return `<tr style="${rowStyle}">
+      <td style="color:var(--muted);font-family:var(--font-display);font-size:12px;font-weight:700">${m.id}</td>
+      <td><span class="team-cell">${m.home}</span><span class="vs-sep">v</span><span class="team-cell">${m.away}</span></td>
+      <td style="color:var(--muted);font-size:13px">${m.venue}</td>
+      <td style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--white)">${m.date}</td>
+      <td style="font-size:13px;color:var(--muted)">${m.time} IST</td>
+      <td>${badgeHTML(st)}</td>
+      <td style="font-family:var(--font-display);font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase">${m.phase}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterMatches(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMatches(filter);
+}
+
+renderMatches('all');
+
+document.getElementById('hamburger').addEventListener('click',function(){document.getElementById('mobileMenu').classList.toggle('open');});
+window.addEventListener('scroll',()=>{document.querySelector('nav').style.background=window.scrollY>50?'rgba(6,7,15,0.95)':'rgba(6,7,15,0.85)';});
+</script>
+<script src="assets/js/chatbot.js"></script>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tournament Registration — CRICKO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/theme.css"/>
+<link rel="stylesheet" href="assets/css/chatbot.css"/>
+<style>
+:root{
+  --bg:#06070f;--bg2:#0d0f1e;--bg3:#111428;
+  --gold:#f0a500;--gold2:#ffd166;
+  --rose:#e8385a;--indigo:#6366f1;--teal:#0dd6c0;
+  --white:#f0f2ff;--muted:#6b7280;
+  --glass:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.08);
+  --radius:16px;
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);overflow-x:hidden;line-height:1.6;}
+.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(240,165,0,0.08) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 60% at 80% 80%,rgba(99,102,241,0.07) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 50% 50%,rgba(232,56,90,0.04) 0%,transparent 60%);}
+.noise-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(240,165,0,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(240,165,0,0.025) 1px,transparent 1px);
+  background-size:60px 60px;}
+.content{position:relative;z-index:2;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,7,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--rose));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:4px 4px 20px rgba(240,165,0,0.3);transform:perspective(200px) rotateY(-5deg);}
+.logo-text{font-family:var(--font-display);font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--gold2),var(--gold),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px;}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--rose));transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-cta-btn{background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;padding:9px 22px;border-radius:8px;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 4px 16px rgba(240,165,0,0.25);transition:all 0.3s;}
+.nav-cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(240,165,0,0.35);color:#06070f;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;}
+.mobile-menu{display:none;position:absolute;top:70px;left:0;right:0;background:rgba(6,7,15,0.97);backdrop-filter:blur(30px);border-bottom:1px solid var(--glass-border);padding:24px 40px;flex-direction:column;gap:16px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;padding:8px 0;border-bottom:1px solid var(--glass-border);}
+.mobile-menu a:hover{color:var(--gold);}
+
+/* PAGE HERO */
+.page-hero{padding:140px 40px 70px;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:300px;background:radial-gradient(ellipse,rgba(240,165,0,0.07),transparent);pointer-events:none;}
+.page-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.page-eyebrow::before{content:'';width:20px;height:1.5px;background:linear-gradient(90deg,var(--gold),var(--rose));}
+.page-title{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,6vw,68px);line-height:1.05;letter-spacing:-1px;margin-bottom:16px;}
+.page-title span{background:linear-gradient(135deg,var(--gold2),var(--gold),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-subtitle{color:rgba(240,242,255,0.5);font-size:17px;max-width:540px;margin:0 auto;}
+
+/* LAYOUT */
+.content-wrap{max-width:1200px;margin:0 auto;padding:0 40px 100px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+
+/* TOURNAMENT SELECTOR */
+.tournament-selector{margin-bottom:28px;}
+.tournament-selector label{display:block;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.tournament-selector select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:10px;padding:12px 16px;color:var(--white);font-family:var(--font-body);font-size:14px;transition:border-color 0.3s;outline:none;-webkit-appearance:none;appearance:none;}
+.tournament-selector select:focus{border-color:rgba(240,165,0,0.4);background:rgba(240,165,0,0.06);}
+.tournament-selector select option{background:#0d0f1e;color:var(--white);}
+.tournament-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.tmeta-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:100px;padding:4px 10px;font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.tmeta-chip.status-open{color:var(--teal);border-color:rgba(13,214,192,0.2);background:rgba(13,214,192,0.07);}
+.tmeta-chip.status-full{color:var(--rose);border-color:rgba(232,56,90,0.2);background:rgba(232,56,90,0.07);}
+.tmeta-chip.status-upcoming{color:var(--indigo);border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.07);}
+
+/* COUNTER BANNER */
+.counter-banner{background:linear-gradient(135deg,rgba(240,165,0,0.1),rgba(232,56,90,0.07));border:1px solid rgba(240,165,0,0.2);border-radius:var(--radius);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px;}
+.counter-left{display:flex;align-items:center;gap:14px;}
+.counter-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--rose));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.counter-title{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--white);letter-spacing:0.5px;}
+.counter-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.counter-right{text-align:right;}
+.counter-num{font-family:var(--font-display);font-weight:800;font-size:30px;line-height:1;}
+.counter-num.full{color:var(--rose);}
+.counter-num.open{background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.counter-of{font-size:12px;color:var(--muted);font-family:var(--font-display);letter-spacing:1px;text-transform:uppercase;}
+
+/* PROGRESS BAR */
+.progress-wrap{margin-bottom:32px;}
+.progress-bar-bg{background:rgba(255,255,255,0.06);border-radius:100px;height:8px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--rose));transition:width 0.5s cubic-bezier(0.4,0,0.2,1);width:0%;}
+.progress-label{display:flex;justify-content:space-between;font-family:var(--font-display);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+/* FORM CARD */
+.form-card{background:linear-gradient(145deg,rgba(240,165,0,0.04),rgba(99,102,241,0.04));border:1px solid var(--glass-border);border-radius:20px;padding:32px;position:sticky;top:90px;}
+.form-card-title{font-family:var(--font-display);font-weight:800;font-size:20px;margin-bottom:6px;color:var(--white);}
+.form-card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.form-group input,.form-group select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:10px;padding:12px 16px;color:var(--white);font-family:var(--font-body);font-size:14px;transition:border-color 0.3s,background 0.3s;outline:none;-webkit-appearance:none;appearance:none;}
+.form-group input::placeholder{color:var(--muted);}
+.form-group input:focus,.form-group select:focus{border-color:rgba(240,165,0,0.4);background:rgba(240,165,0,0.06);}
+.form-group select option{background:#0d0f1e;color:var(--white);}
+.form-error{font-size:12px;color:var(--rose);font-family:var(--font-display);margin-top:6px;display:none;}
+.form-error.show{display:block;}
+
+/* FEE BOX */
+.fee-box{display:none;align-items:center;justify-content:space-between;margin-bottom:20px;padding:14px 18px;background:rgba(240,165,0,0.06);border:1px solid rgba(240,165,0,0.2);border-radius:12px;}
+.fee-box.show{display:flex;}
+.fee-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.fee-value{font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--gold2);}
+
+/* PAYMENT MODAL */
+.pay-overlay{position:fixed;inset:0;z-index:500;background:rgba(6,7,15,0.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:24px;}
+.pay-overlay.open{display:flex;}
+.pay-modal{background:linear-gradient(145deg,var(--bg2),var(--bg3));border:1px solid rgba(240,165,0,0.2);border-radius:24px;padding:40px 36px;width:100%;max-width:420px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);animation:modalIn 0.3s cubic-bezier(0.4,0,0.2,1);}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.pay-modal-head{margin-bottom:24px;}
+.pay-modal-icon{font-size:40px;margin-bottom:12px;}
+.pay-modal-title{font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--white);margin-bottom:6px;}
+.pay-modal-sub{font-size:13px;color:var(--muted);}
+.pay-modal-sub strong{color:var(--white);}
+.pay-amount-badge{display:inline-block;background:linear-gradient(135deg,rgba(240,165,0,0.15),rgba(232,56,90,0.1));border:1px solid rgba(240,165,0,0.3);border-radius:100px;padding:10px 28px;font-family:var(--font-display);font-weight:800;font-size:28px;color:var(--gold2);margin-bottom:24px;letter-spacing:1px;}
+.pay-upi-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;margin-bottom:24px;}
+.pay-upi-label{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.pay-upi-id{font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--white);margin-bottom:8px;letter-spacing:1px;}
+.pay-upi-note{font-size:12px;color:var(--muted);line-height:1.5;}
+.pay-modal-actions{display:flex;gap:12px;}
+.pay-cancel-btn{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);color:var(--muted);padding:12px 16px;border-radius:10px;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+.pay-cancel-btn:hover{background:rgba(232,56,90,0.1);border-color:rgba(232,56,90,0.25);color:var(--rose);}
+.pay-confirm-btn{flex:2;background:linear-gradient(135deg,var(--teal),var(--indigo));color:#fff;border:none;padding:12px 16px;border-radius:10px;font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 16px rgba(13,214,192,0.25);display:flex;align-items:center;justify-content:center;gap:8px;}
+.pay-confirm-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,214,192,0.35);}
+.pay-confirm-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.pay-processing{padding:24px 0;}
+.pay-spinner{font-size:44px;color:var(--gold);margin-bottom:16px;}
+.pay-processing-title{font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--white);margin-bottom:8px;}
+.pay-processing-sub{font-size:13px;color:var(--muted);}
+.pay-success-screen{padding:20px 0;}
+.pay-success-icon{font-size:56px;margin-bottom:16px;}
+.pay-success-title{font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--teal);margin-bottom:14px;}
+.pay-success-txid{font-family:monospace;font-size:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 14px;display:inline-block;margin-bottom:10px;color:var(--muted);}
+.pay-success-txid span{color:var(--gold2);font-weight:700;}
+.pay-success-amount{font-family:var(--font-display);font-size:15px;color:var(--white);margin-bottom:12px;font-weight:700;}
+.pay-saving{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px;}
+.pay-saving-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* SUBMIT BTN */
+.submit-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--rose));color:#06070f;border:none;padding:14px 24px;border-radius:10px;font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 20px rgba(240,165,0,0.25);margin-top:6px;}
+.submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(240,165,0,0.35);}
+.submit-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
+.full-notice{background:rgba(232,56,90,0.1);border:1px solid rgba(232,56,90,0.25);border-radius:10px;padding:14px 18px;font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1px;color:var(--rose);text-align:center;display:none;margin-top:12px;}
+.full-notice.show{display:block;}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;right:32px;z-index:999;background:linear-gradient(135deg,rgba(13,214,192,0.15),rgba(99,102,241,0.1));border:1px solid rgba(13,214,192,0.3);border-radius:14px;padding:16px 22px;display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--teal);letter-spacing:0.5px;box-shadow:0 16px 40px rgba(0,0,0,0.5);transform:translateY(80px);opacity:0;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);pointer-events:none;max-width:360px;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* PARTICIPANTS */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.section-title{font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--white);}
+.section-title span{background:linear-gradient(135deg,var(--gold2),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.empty-state{background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:20px;padding:60px 40px;text-align:center;}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.4;}
+.empty-title{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--muted);margin-bottom:6px;}
+.empty-sub{font-size:13px;color:rgba(107,114,128,0.7);}
+.participant-list{display:flex;flex-direction:column;gap:12px;}
+.participant-card{background:linear-gradient(135deg,rgba(240,165,0,0.04),rgba(99,102,241,0.03));border:1px solid var(--glass-border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;transition:all 0.3s;animation:slideIn 0.35s cubic-bezier(0.4,0,0.2,1);}
+.participant-card:hover{border-color:rgba(240,165,0,0.18);background:linear-gradient(135deg,rgba(240,165,0,0.07),rgba(99,102,241,0.05));}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.participant-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rose));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px;color:#06070f;flex-shrink:0;}
+.participant-info{flex:1;min-width:0;}
+.participant-name{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.participant-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.meta-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:100px;padding:3px 9px;font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.meta-chip.role-batter{color:var(--gold);border-color:rgba(240,165,0,0.2);background:rgba(240,165,0,0.07);}
+.meta-chip.role-bowler{color:var(--rose);border-color:rgba(232,56,90,0.2);background:rgba(232,56,90,0.07);}
+.meta-chip.role-allrounder{color:var(--teal);border-color:rgba(13,214,192,0.2);background:rgba(13,214,192,0.07);}
+.meta-chip.role-keeper{color:var(--indigo);border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.07);}
+.meta-chip.paid{color:var(--teal);border-color:rgba(13,214,192,0.2);background:rgba(13,214,192,0.07);}
+.meta-chip.pending{color:var(--gold);border-color:rgba(240,165,0,0.2);background:rgba(240,165,0,0.07);}
+.meta-chip.failed{color:var(--rose);border-color:rgba(232,56,90,0.2);background:rgba(232,56,90,0.07);}
+.participant-email{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.participant-tx{font-size:10px;color:var(--indigo);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:monospace;}
+.remove-btn{background:rgba(232,56,90,0.07);border:1px solid rgba(232,56,90,0.15);color:var(--rose);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;flex-shrink:0;transition:all 0.3s;}
+.remove-btn:hover{background:rgba(232,56,90,0.18);border-color:rgba(232,56,90,0.35);transform:scale(1.1);}
+
+footer{background:var(--bg2);border-top:1px solid var(--glass-border);padding:40px;}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.5px;}
+
+@media(max-width:900px){
+  nav{padding:0 24px;}
+  .nav-links,.nav-cta-btn{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:110px 24px 60px;}
+  .content-wrap{padding:0 24px 80px;}
+  .two-col{grid-template-columns:1fr;}
+  .form-card{position:static;}
+  footer{padding:28px 24px;}
+}
+@media(max-width:480px){
+  .counter-banner{flex-direction:column;text-align:center;}
+  .counter-right{text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="noise-overlay"></div>
+<div class="grid-lines"></div>
+<div class="content">
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><i class="fas fa-cricket-bat-ball" style="color:#06070f"></i></div>
+    <span class="logo-text">CRICKO</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="schedule.html">Schedule</a></li>
+    <li><a href="players.html">Players</a></li>
+    <li><a href="tournament.html" class="active">Tournament</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="admin.html">Admin</a></li>
+  </ul>
+  <a href="login.html" class="nav-cta-btn">Login</a>
+  <button id="theme-toggle" aria-label="Toggle dark mode"><i class="fas fa-sun"></i></button>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="schedule.html">Schedule</a>
+    <a href="players.html">Players</a>
+    <a href="tournament.html" style="color:var(--gold)">Tournament</a>
+    <a href="contact.html">Contact</a>
+    <a href="admin.html">Admin</a>
+    <a href="login.html" style="color:var(--gold)">Login</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-eyebrow">Season 2025</div>
+  <h1 class="page-title">Tournament <span>Registration</span></h1>
+  <p class="page-subtitle">Register for the CRICKO Season 2025 tournaments. Fill your details, pay online and secure your spot.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- COUNTER BANNER -->
+  <div class="counter-banner">
+    <div class="counter-left">
+      <div class="counter-icon">🏆</div>
+      <div>
+        <div class="counter-title" id="bannerTitle">CRICKO Season 2025</div>
+        <div class="counter-sub" id="counterSub">Loading registration data…</div>
+      </div>
+    </div>
+    <div class="counter-right">
+      <div class="counter-num open" id="counterNum">—</div>
+      <div class="counter-of" id="counterOf">/ — Players</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Registered Players</span>
+      <span id="progressLabel">— / —</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- LEFT: FORM -->
+    <div>
+      <div class="form-card">
+        <div class="form-card-title">Register as a Player</div>
+        <div class="form-card-sub">Select a tournament, fill your details, and complete a quick payment to confirm.</div>
+
+        <!-- TOURNAMENT SELECTOR -->
+        <div class="tournament-selector">
+          <label for="tournamentSelect">Select Tournament</label>
+          <select id="tournamentSelect">
+            <option value="">Loading tournaments…</option>
+          </select>
+          <div class="tournament-meta" id="tournamentMeta"></div>
+        </div>
+
+        <form id="regForm" novalidate>
+          <div class="form-group">
+            <label for="playerName">Full Name</label>
+            <input type="text" id="playerName" placeholder="e.g. Virat Kohli" maxlength="60" autocomplete="off"/>
+            <div class="form-error" id="nameError">Please enter your full name.</div>
+          </div>
+          <div class="form-group">
+            <label for="playerEmail">Email Address</label>
+            <input type="email" id="playerEmail" placeholder="e.g. player@email.com" maxlength="80" autocomplete="off"/>
+            <div class="form-error" id="emailError">Please enter a valid email address.</div>
+          </div>
+          <div class="form-group">
+            <label for="playerRole">Playing Role</label>
+            <select id="playerRole">
+              <option value="" disabled selected>Select your role</option>
+              <option value="Batter">Batter</option>
+              <option value="Bowler">Bowler</option>
+              <option value="All-Rounder">All-Rounder</option>
+              <option value="Wicket-Keeper">Wicket-Keeper</option>
+            </select>
+            <div class="form-error" id="roleError">Please select your playing role.</div>
+          </div>
+          <div class="form-group">
+            <label for="playerTeam">Team / City</label>
+            <input type="text" id="playerTeam" placeholder="e.g. Mumbai Kings" maxlength="50" autocomplete="off"/>
+            <div class="form-error" id="teamError">Please enter your team or city.</div>
+          </div>
+
+          <!-- REGISTRATION FEE -->
+          <div class="fee-box" id="feeDisplay">
+            <span class="fee-label">Registration Fee</span>
+            <span class="fee-value">₹<span id="feeAmount">500</span></span>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <i class="fas fa-bolt"></i>&nbsp; Pay &amp; Register
+          </button>
+          <div class="full-notice" id="fullNotice">🚫 Tournament is full — maximum players reached.</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT: PARTICIPANTS -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Registered <span>Participants</span></div>
+      </div>
+      <div id="participantsList">
+        <div class="empty-state">
+          <div class="empty-icon">🏏</div>
+          <div class="empty-title">Loading participants…</div>
+          <div class="empty-sub">Fetching from database.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 CRICKO TOURNAMENT — ALL RIGHTS RESERVED</p>
+    <p style="font-size:13px;color:var(--muted)">Made with <span style="color:var(--rose)">♥</span> for cricket</p>
+  </div>
+</footer>
+</div>
+
+<!-- FAKE PAYMENT MODAL -->
+<div id="payModal" class="pay-overlay">
+  <div class="pay-modal">
+    <!-- Step 1: Payment details -->
+    <div id="payStep1">
+      <div class="pay-modal-head">
+        <div class="pay-modal-icon">💳</div>
+        <div class="pay-modal-title">Complete Payment</div>
+        <div class="pay-modal-sub">Tournament: <strong id="modalTournamentName">—</strong></div>
+      </div>
+      <div class="pay-amount-badge">₹<span id="modalAmount">500</span></div>
+      <div class="pay-upi-box">
+        <div class="pay-upi-label">Pay via UPI</div>
+        <div class="pay-upi-id">📱 9876543210@ybl</div>
+        <div class="pay-upi-note">Send the exact amount to the UPI ID above, then click "I've Paid" to confirm.</div>
+      </div>
+      <div class="pay-modal-actions">
+        <button type="button" class="pay-cancel-btn" onclick="cancelPayment()">Cancel</button>
+        <button type="button" class="pay-confirm-btn" id="confirmPayBtn" onclick="confirmPayment()">
+          <i class="fas fa-check"></i> I've Paid
+        </button>
+      </div>
+    </div>
+    <!-- Step 2: Verifying -->
+    <div id="payStep2" style="display:none">
+      <div class="pay-processing">
+        <div class="pay-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+        <div class="pay-processing-title">Verifying Payment…</div>
+        <div class="pay-processing-sub">Checking your transaction, please wait.</div>
+      </div>
+    </div>
+    <!-- Step 3: Success -->
+    <div id="payStep3" style="display:none">
+      <div class="pay-success-screen">
+        <div class="pay-success-icon">✅</div>
+        <div class="pay-success-title">Payment Successful!</div>
+        <div class="pay-success-txid">Txn ID: <span id="fakeTxId">—</span></div>
+        <div class="pay-success-amount">Amount Paid: ₹<span id="modalSuccessAmount">—</span></div>
+        <div class="pay-saving"><span class="pay-saving-dot"></span> Saving your registration…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script>
+const API = typeof BACKEND_URL !== 'undefined' ? BACKEND_URL : '';
+let selectedTournament = null;
+let tournaments        = [];
+
+// ─── Tournament Selector ──────────────────────────────────────────────────────
+
+async function loadTournaments() {
+  try {
+    const res  = await fetch(`${API}/api/tournaments`);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+    tournaments = json.data;
+
+    const sel = document.getElementById('tournamentSelect');
+    sel.innerHTML = '<option value="">— Select a tournament —</option>';
+    tournaments.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t._id;
+      opt.textContent = `${t.name} — ${t.location} (${t.date})`;
+      if (t.status === 'Full' || t.status === 'Closed') opt.disabled = true;
+      sel.appendChild(opt);
+    });
+  } catch (e) {
+    const sel = document.getElementById('tournamentSelect');
+    sel.innerHTML = '<option value="">⚠ Server offline — start the backend first</option>';
+    sel.style.borderColor = 'rgba(232,56,90,0.5)';
+    document.getElementById('participantsList').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Cannot connect to server</div>
+        <div class="empty-sub">Make sure the backend is running:<br/>
+          <code style="color:var(--gold);font-size:12px">cd backend &amp;&amp; node server.js</code><br/><br/>
+          Then open this page at <code style="color:var(--teal);font-size:12px">http://localhost:3000/tournament.html</code><br/>
+          not directly from the file system.</div>
+      </div>`;
+  }
+}
+
+document.getElementById('tournamentSelect').addEventListener('change', async function() {
+  const id = this.value;
+  selectedTournament = tournaments.find(t => t._id === id) || null;
+
+  const meta = document.getElementById('tournamentMeta');
+  const fee  = document.getElementById('feeDisplay');
+  const feeAmt = document.getElementById('feeAmount');
+
+  if (!selectedTournament) { meta.innerHTML = ''; fee.classList.remove('show'); loadParticipants(); return; }
+
+  const statusClass = {
+    Open: 'status-open', Upcoming: 'status-upcoming', Full: 'status-full', Closed: 'status-full'
+  }[selectedTournament.status] || '';
+
+  meta.innerHTML = `
+    <span class="tmeta-chip ${statusClass}">${selectedTournament.status}</span>
+    <span class="tmeta-chip"><i class="fas fa-users" style="margin-right:4px"></i>${selectedTournament.teams} Teams</span>
+    <span class="tmeta-chip"><i class="fas fa-location-dot" style="margin-right:4px"></i>${selectedTournament.location}</span>
+    <span class="tmeta-chip"><i class="fas fa-indian-rupee-sign" style="margin-right:4px"></i>₹${selectedTournament.fee}</span>
+  `;
+
+  feeAmt.textContent = selectedTournament.fee || '500';
+  fee.classList.add('show');
+
+  await loadParticipants();
+});
+
+// ─── Load Participants from MongoDB ──────────────────────────────────────────
+
+async function loadParticipants() {
+  const list = document.getElementById('participantsList');
+
+  if (!selectedTournament) {
+    updateCounter(0, 10);
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-title">Select a tournament</div><div class="empty-sub">Choose a tournament above to see registered players.</div></div>`;
+    return;
+  }
+
+  try {
+    const res  = await fetch(`${API}/api/registrations?tournamentId=${selectedTournament._id}`);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+
+    const players  = json.data;
+    const maxP     = selectedTournament.maxPlayers || 10;
+    const count    = players.length;
+
+    updateCounter(count, maxP);
+
+    if (count === 0) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">🏏</div><div class="empty-title">No players registered yet</div><div class="empty-sub">Be the first to register for ${escHtml(selectedTournament.name)}!</div></div>`;
+      return;
+    }
+
+    list.innerHTML = '<div class="participant-list">' +
+      players.map((p, i) => `
+        <div class="participant-card">
+          <div class="participant-num">${i + 1}</div>
+          <div class="participant-info">
+            <div class="participant-name">${escHtml(p.name)}</div>
+            <div class="participant-meta">
+              <span class="meta-chip ${roleClass(p.role)}">${roleIcon(p.role)} ${escHtml(p.role)}</span>
+              <span class="meta-chip">${escHtml(p.team)}</span>
+              <span class="meta-chip ${p.paymentStatus.toLowerCase()}">${payIcon(p.paymentStatus)} ${escHtml(p.paymentStatus)}</span>
+            </div>
+            <div class="participant-email">${escHtml(p.email)}</div>
+            ${p.txHash ? `<div class="participant-tx">Tx: ${escHtml(p.txHash)}</div>` : ''}
+          </div>
+          <button class="remove-btn" onclick="deleteRegistration('${p._id}', '${escHtml(p.name)}')" title="Delete registration">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `).join('') +
+    '</div>';
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading participants</div><div class="empty-sub">${escHtml(e.message)}</div></div>`;
+  }
+}
+
+async function deleteRegistration(id, name) {
+  if (!confirm(`Remove ${name}'s registration? This cannot be undone.`)) return;
+  try {
+    const res  = await fetch(`${API}/api/registrations/${id}`, { method: 'DELETE' });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+    showToast(`${name} removed.`, false);
+    loadParticipants();
+  } catch (e) {
+    showToast('Delete failed: ' + e.message, false);
+  }
+}
+
+// ─── Counter + Progress Bar ───────────────────────────────────────────────────
+
+function updateCounter(count, max) {
+  const numEl = document.getElementById('counterNum');
+  numEl.textContent = count;
+  numEl.className   = 'counter-num ' + (count >= max ? 'full' : 'open');
+
+  document.getElementById('bannerTitle').textContent = selectedTournament ? selectedTournament.name : 'CRICKO Season 2025';
+  document.getElementById('counterSub').textContent  = count >= max
+    ? 'Tournament is FULL — no more registrations'
+    : `Registration open — ${max - count} slot${max - count !== 1 ? 's' : ''} remaining`;
+  document.getElementById('counterOf').textContent   = `/ ${max} Players`;
+  document.getElementById('progressFill').style.width = (count / max * 100) + '%';
+  document.getElementById('progressLabel').textContent = `${count} / ${max}`;
+
+  const btn        = document.getElementById('submitBtn');
+  const fullNotice = document.getElementById('fullNotice');
+  if (count >= max) { btn.disabled = true; fullNotice.classList.add('show'); }
+  else              { btn.disabled = false; fullNotice.classList.remove('show'); }
+}
+
+// ─── Fake Payment Modal ────────────────────────────────────────────────────────
+
+let pendingFormData = null;
+
+function openPayModal(formData) {
+  pendingFormData = formData;
+  document.getElementById('modalTournamentName').textContent = selectedTournament.name;
+  document.getElementById('modalAmount').textContent         = selectedTournament.fee || '500';
+  document.getElementById('payStep1').style.display = 'block';
+  document.getElementById('payStep2').style.display = 'none';
+  document.getElementById('payStep3').style.display = 'none';
+  const btn = document.getElementById('confirmPayBtn');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid';
+  document.getElementById('payModal').classList.add('open');
+}
+
+function cancelPayment() {
+  document.getElementById('payModal').classList.remove('open');
+  pendingFormData = null;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-bolt"></i>&nbsp; Pay &amp; Register';
+}
+
+async function confirmPayment() {
+  const btn = document.getElementById('confirmPayBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+
+  document.getElementById('payStep1').style.display = 'none';
+  document.getElementById('payStep2').style.display = 'block';
+
+  await new Promise(r => setTimeout(r, 2200));
+
+  const txId = 'TXN' + Math.random().toString(36).substring(2, 11).toUpperCase();
+  document.getElementById('fakeTxId').textContent          = txId;
+  document.getElementById('modalSuccessAmount').textContent = selectedTournament.fee || '500';
+
+  document.getElementById('payStep2').style.display = 'none';
+  document.getElementById('payStep3').style.display = 'block';
+
+  await new Promise(r => setTimeout(r, 1400));
+
+  document.getElementById('payModal').classList.remove('open');
+  await saveRegistration({ ...pendingFormData, txHash: txId, paymentStatus: 'Paid', amountPaid: String(selectedTournament.fee || '500') });
+  pendingFormData = null;
+}
+
+async function saveRegistration(data) {
+  const btn = document.getElementById('submitBtn');
+  try {
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Saving…';
+    const res  = await fetch(`${API}/api/registrations`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      showToast(json.message, false);
+    } else {
+      showToast(`${data.name} registered successfully!`);
+      document.getElementById('regForm').reset();
+      document.getElementById('tournamentSelect').value = selectedTournament._id;
+      await loadParticipants();
+    }
+  } catch (e) {
+    showToast('Server error: ' + e.message, false);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-bolt"></i>&nbsp; Pay &amp; Register';
+  }
+}
+
+// ─── Form Submission ──────────────────────────────────────────────────────────
+
+document.getElementById('regForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  clearErrors();
+
+  const name  = document.getElementById('playerName').value.trim();
+  const email = document.getElementById('playerEmail').value.trim();
+  const role  = document.getElementById('playerRole').value;
+  const team  = document.getElementById('playerTeam').value.trim();
+
+  let valid = true;
+  if (!name)                          { document.getElementById('nameError').classList.add('show');  valid = false; }
+  if (!email || !isValidEmail(email)) { document.getElementById('emailError').classList.add('show'); valid = false; }
+  if (!role)                          { document.getElementById('roleError').classList.add('show');  valid = false; }
+  if (!team)                          { document.getElementById('teamError').classList.add('show');  valid = false; }
+  if (!valid) return;
+
+  if (!selectedTournament) { showToast('Please select a tournament first.', false); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Opening payment…';
+
+  openPayModal({
+    name, email, role, team,
+    tournamentId:  selectedTournament._id,
+    walletAddress: null,
+    paymentMethod: 'UPI',
+  });
+});
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function clearErrors() {
+  ['nameError','emailError','roleError','teamError'].forEach(id => document.getElementById(id).classList.remove('show'));
+}
+
+function roleClass(r) { return { 'Batter':'role-batter','Bowler':'role-bowler','All-Rounder':'role-allrounder','Wicket-Keeper':'role-keeper' }[r] || ''; }
+function roleIcon(r)  { return { 'Batter':'🏏','Bowler':'⚡','All-Rounder':'🔥','Wicket-Keeper':'🧤' }[r] || '🏏'; }
+function payIcon(s)   { return { 'Paid':'✅','Pending':'⏳','Failed':'❌' }[s] || ''; }
+
+function showToast(msg, success = true) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.style.borderColor = success ? 'rgba(13,214,192,0.3)' : 'rgba(232,56,90,0.3)';
+  toast.style.color       = success ? 'var(--teal)' : 'var(--rose)';
+  toast.firstElementChild.className = success ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// ─── Hamburger ────────────────────────────────────────────────────────────────
+
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+(async () => {
+  await loadTournaments();
+  updateCounter(0, 10);
+})();
+</script>
+<script src="assets/js/chatbot.js"></script>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>
