@@ -9,8 +9,6 @@ const connectDB    = require('./config/db');
 const routes       = require('./routes/index');
 const errorHandler = require('./middleware/errorHandler');
 
-connectDB();
-
 const app = express();
 
 // ── Security & Logging ────────────────────────────────────────────────────────
@@ -35,11 +33,22 @@ app.use(express.urlencoded({ extended: false }));
 const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../frontend');
 app.use(express.static(frontendPath));
 
+// ── DB Connection Middleware (lazy, cached — safe for serverless) ─────────────
+const dbMiddleware = async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err.message);
+    res.status(503).json({ success: false, message: 'Database unavailable. Check MONGO_URI.', data: null });
+  }
+};
+
 // ── API Routes ────────────────────────────────────────────────────────────────
-app.use('/api', routes);
+app.use('/api', dbMiddleware, routes);
 
 // Legacy /players route kept for backward compatibility
-app.use('/players', require('./routes/playerRoutes'));
+app.use('/players', dbMiddleware, require('./routes/playerRoutes'));
 
 // ── Health Check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
