@@ -575,6 +575,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
       localStorage.setItem('cricko_user',  JSON.stringify(json.data.user));
       document.getElementById('loginSuccess').classList.add('show');
       document.getElementById('loginSuccess').scrollIntoView({ behavior:'smooth', block:'center' });
+      setTimeout(() => { window.location.href = 'index.html'; }, 1500);
     } else {
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket" style="margin-right:10px"></i>Launch Dashboard';

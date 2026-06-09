@@ -695,6 +695,7 @@ getEl('signupForm').addEventListener('submit', async function(e) {
       localStorage.setItem('cricko_user',  JSON.stringify(json.data.user));
       getEl('successOverlay').classList.add('show');
       getEl('successOverlay').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { window.location.href = 'index.html'; }, 2000);
     } else {
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-rocket" style="margin-right:10px"></i>Create Account';
